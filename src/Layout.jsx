@@ -1,72 +1,119 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Zap, Home, Car, History, User } from 'lucide-react';
+import { Zap, Home, Car, CreditCard, Receipt } from 'lucide-react';
 
 export default function Layout({ children, currentPageName }) {
+  const location = useLocation();
+
   const navItems = [
-    { name: 'Home', icon: Home, page: 'Home' },
-    { name: 'Vehicles', icon: Car, page: 'Vehicles' },
-    { name: 'History', icon: History, page: 'History' },
+    { name: 'Home', icon: Home, path: createPageUrl('Home') },
+    { name: 'Vehicles', icon: Car, path: createPageUrl('Vehicles') },
+    { name: 'Payments', icon: CreditCard, path: createPageUrl('Payments') },
+    { name: 'History', icon: Receipt, path: createPageUrl('History') },
   ];
 
-  return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Top Navigation - Desktop */}
-      <nav className="hidden sm:block fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to={createPageUrl('Home')} className="flex items-center gap-2">
-            <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center">
-              <Zap className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-bold text-xl text-slate-900">QuickSilver<span className="text-blue-600">Pay</span></span>
-          </Link>
+  const isActive = (path) => location.pathname === path;
 
-          <div className="flex items-center gap-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = currentPageName === item.page;
-              return (
-                <Link key={item.page} to={createPageUrl(item.page)}>
-                  <button className={`px-4 py-2 rounded-xl font-medium text-sm flex items-center gap-2 transition-all ${
-                    isActive 
-                      ? 'bg-blue-50 text-blue-600' 
-                      : 'text-slate-600 hover:bg-slate-100'
-                  }`}>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50">
+      {/* Navigation */}
+      <nav className="bg-white/80 backdrop-blur-lg border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex justify-between items-center h-20">
+            {/* Logo */}
+            <Link to={createPageUrl('Home')} className="flex items-center gap-3 group">
+              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
+                <Zap className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-slate-900">QuickSilver</h1>
+                <p className="text-xs text-slate-600">Instant Toll Payment</p>
+              </div>
+            </Link>
+
+            {/* Navigation Links */}
+            <div className="hidden md:flex items-center gap-2">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.path);
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.path}
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all duration-300 ${
+                      active
+                        ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                    }`}
+                  >
                     <Icon className="w-4 h-4" />
-                    {item.name}
-                  </button>
-                </Link>
-              );
-            })}
+                    <span>{item.name}</span>
+                  </Link>
+                );
+              })}
+            </div>
+
+            {/* Mobile Menu Button - Simple for now */}
+            <div className="md:hidden">
+              <button className="p-2 rounded-lg hover:bg-slate-100">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </nav>
 
-      {/* Main Content */}
-      <main className="sm:pt-16 pb-24 sm:pb-0">
-        {children}
-      </main>
-
-      {/* Bottom Navigation - Mobile */}
-      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-100 px-2 pb-safe">
-        <div className="flex items-center justify-around py-2">
+      {/* Mobile Navigation */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50 shadow-lg">
+        <div className="grid grid-cols-4 gap-1 p-2">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = currentPageName === item.page;
+            const active = isActive(item.path);
             return (
-              <Link key={item.page} to={createPageUrl(item.page)}>
-                <button className={`flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-all ${
-                  isActive ? 'text-blue-600' : 'text-slate-400'
-                }`}>
-                  <Icon className={`w-6 h-6 ${isActive ? 'scale-110' : ''} transition-transform`} />
-                  <span className="text-xs font-medium">{item.name}</span>
-                </button>
+              <Link
+                key={item.name}
+                to={item.path}
+                className={`flex flex-col items-center gap-1 py-3 rounded-lg transition-all duration-300 ${
+                  active
+                    ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white'
+                    : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+                <span className="text-xs font-medium">{item.name}</span>
               </Link>
             );
           })}
         </div>
-      </nav>
+      </div>
+
+      {/* Main Content */}
+      <main className="pb-20 md:pb-0">
+        {children}
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-slate-900 text-white py-12 mt-20">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
+                <Zap className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <p className="font-bold">QuickSilver Instant Pay</p>
+                <p className="text-sm text-slate-400">Never pay toll penalties again</p>
+              </div>
+            </div>
+            <p className="text-sm text-slate-400">
+              © 2024 QuickSilver. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
