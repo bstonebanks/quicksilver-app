@@ -5,7 +5,7 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { 
   Zap, MapPin, Bell, Battery, Shield, Radio, 
-  CheckCircle, Info, Settings, Navigation
+  Info, Navigation
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -62,57 +62,7 @@ export default function AutoDetect() {
           <p className="text-slate-600">Configure automatic toll detection with AWS geofencing</p>
         </div>
 
-        {/* AWS Architecture Info */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8 bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-3xl p-8"
-        >
-          <div className="flex items-start gap-4 mb-6">
-            <div className="h-14 w-14 rounded-xl bg-cyan-500 flex items-center justify-center flex-shrink-0">
-              <Radio className="w-7 h-7 text-white" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold mb-2">AWS Location Service Architecture</h2>
-              <p className="text-slate-300 leading-relaxed">
-                Auto-detection uses Amazon Location Service with geofencing to track your position and automatically 
-                detect when you enter toll zones.
-              </p>
-            </div>
-          </div>
 
-          <div className="space-y-3 bg-white/5 rounded-2xl p-6 backdrop-blur-sm">
-            <h3 className="font-semibold text-cyan-300 mb-3">How It Works:</h3>
-            <div className="flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="font-medium">Amazon Location Tracker</p>
-                <p className="text-sm text-slate-400">Tracks device position in real-time</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="font-medium">Geofence Collection</p>
-                <p className="text-sm text-slate-400">Virtual boundaries around {geofenceCount} toll plazas</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="font-medium">EventBridge + Lambda</p>
-                <p className="text-sm text-slate-400">Triggered on ENTER events → creates trip records</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 text-cyan-400 mt-0.5 flex-shrink-0" />
-              <div>
-                <p className="font-medium">SNS Push Notifications</p>
-                <p className="text-sm text-slate-400">Instant alerts with one-tap payment</p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
 
         {/* Main Toggle */}
         <motion.div
@@ -278,49 +228,7 @@ export default function AutoDetect() {
           </Card>
         </motion.div>
 
-        {/* AWS Services Used */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <Card className="border-slate-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Settings className="w-5 h-5 text-cyan-600" />
-                AWS Services Used
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-slate-50 rounded-xl p-4">
-                  <p className="font-semibold text-slate-900 mb-1">Amazon Location Service</p>
-                  <p className="text-sm text-slate-600">GPS tracking + geofencing</p>
-                </div>
-                <div className="bg-slate-50 rounded-xl p-4">
-                  <p className="font-semibold text-slate-900 mb-1">AWS EventBridge</p>
-                  <p className="text-sm text-slate-600">Geofence event routing</p>
-                </div>
-                <div className="bg-slate-50 rounded-xl p-4">
-                  <p className="font-semibold text-slate-900 mb-1">AWS Lambda</p>
-                  <p className="text-sm text-slate-600">Event processing & logic</p>
-                </div>
-                <div className="bg-slate-50 rounded-xl p-4">
-                  <p className="font-semibold text-slate-900 mb-1">Amazon SNS</p>
-                  <p className="text-sm text-slate-600">Push notifications</p>
-                </div>
-                <div className="bg-slate-50 rounded-xl p-4">
-                  <p className="font-semibold text-slate-900 mb-1">DynamoDB</p>
-                  <p className="text-sm text-slate-600">Trip data storage</p>
-                </div>
-                <div className="bg-slate-50 rounded-xl p-4">
-                  <p className="font-semibold text-slate-900 mb-1">Amazon Cognito</p>
-                  <p className="text-sm text-slate-600">User authentication</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+
       </div>
     </div>
   );
