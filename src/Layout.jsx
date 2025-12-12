@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Zap, Home, Car, CreditCard, Receipt, MapPin, Radio } from 'lucide-react';
+import { Zap, Home, Car, CreditCard, Receipt, MapPin, Radio, Cloud } from 'lucide-react';
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
@@ -10,6 +10,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Home', icon: Home, path: createPageUrl('Home') },
     { name: 'Map', icon: MapPin, path: createPageUrl('Map') },
     { name: 'Auto-Detect', icon: Radio, path: createPageUrl('AutoDetect') },
+    { name: 'Architecture', icon: Cloud, path: createPageUrl('Architecture') },
     { name: 'Vehicles', icon: Car, path: createPageUrl('Vehicles') },
     { name: 'Payments', icon: CreditCard, path: createPageUrl('Payments') },
     { name: 'History', icon: Receipt, path: createPageUrl('History') },

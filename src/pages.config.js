@@ -4,6 +4,7 @@ import Payments from './pages/Payments';
 import History from './pages/History';
 import Map from './pages/Map';
 import AutoDetect from './pages/AutoDetect';
+import Architecture from './pages/Architecture';
 import __Layout from './Layout.jsx';
 
 
@@ -14,6 +15,7 @@ export const PAGES = {
     "History": History,
     "Map": Map,
     "AutoDetect": AutoDetect,
+    "Architecture": Architecture,
 }
 
 export const pagesConfig = {
