@@ -1,13 +1,15 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Zap, Home, Car, CreditCard, Receipt } from 'lucide-react';
+import { Zap, Home, Car, CreditCard, Receipt, MapPin, Radio } from 'lucide-react';
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
 
   const navItems = [
     { name: 'Home', icon: Home, path: createPageUrl('Home') },
+    { name: 'Map', icon: MapPin, path: createPageUrl('Map') },
+    { name: 'Auto-Detect', icon: Radio, path: createPageUrl('AutoDetect') },
     { name: 'Vehicles', icon: Car, path: createPageUrl('Vehicles') },
     { name: 'Payments', icon: CreditCard, path: createPageUrl('Payments') },
     { name: 'History', icon: Receipt, path: createPageUrl('History') },
@@ -69,7 +71,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Mobile Navigation */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50 shadow-lg">
         <div className="grid grid-cols-4 gap-1 p-2">
-          {navItems.map((item) => {
+          {navItems.slice(0, 4).map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
             return (
