@@ -25,11 +25,11 @@ export default function Layout({ children, currentPageName }) {
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
             <Link to={createPageUrl('Home')} className="flex items-center gap-3 group">
-              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-slate-400 to-blue-900 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 p-1.5">
+              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-slate-400 to-blue-900 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 overflow-hidden">
                 <img 
                   src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/693b33d51f81e96e437bf0bf/0742d052d_Quicksilverlogosimple.png" 
                   alt="QuickSilver" 
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-cover"
                 />
               </div>
               <div>
@@ -106,11 +106,11 @@ export default function Layout({ children, currentPageName }) {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-slate-400 to-blue-900 flex items-center justify-center p-1.5">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-slate-400 to-blue-900 flex items-center justify-center overflow-hidden">
                 <img 
                   src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/693b33d51f81e96e437bf0bf/0742d052d_Quicksilverlogosimple.png" 
                   alt="QuickSilver" 
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-cover"
                 />
               </div>
               <div>

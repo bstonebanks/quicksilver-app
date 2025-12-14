@@ -49,11 +49,11 @@ export default function Home() {
             className="text-center"
           >
             <div className="inline-block mb-6">
-              <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-slate-400 to-blue-900 flex items-center justify-center shadow-2xl mx-auto p-3">
+              <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-slate-400 to-blue-900 flex items-center justify-center shadow-2xl mx-auto overflow-hidden">
                 <img 
                   src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/693b33d51f81e96e437bf0bf/0742d052d_Quicksilverlogosimple.png" 
                   alt="QuickSilver" 
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-cover"
                 />
               </div>
             </div>
