@@ -25,8 +25,12 @@ export default function Layout({ children, currentPageName }) {
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
             <Link to={createPageUrl('Home')} className="flex items-center gap-3 group">
-              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
-                <Zap className="w-6 h-6 text-white" />
+              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-slate-400 to-blue-900 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 p-1.5">
+                <img 
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/693b33d51f81e96e437bf0bf/0742d052d_Quicksilverlogosimple.png" 
+                  alt="QuickSilver" 
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div>
                 <h1 className="text-xl font-bold text-slate-900">QuickSilver</h1>
@@ -45,7 +49,7 @@ export default function Layout({ children, currentPageName }) {
                     to={item.path}
                     className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all duration-300 ${
                       active
-                        ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg'
+                        ? 'bg-gradient-to-r from-slate-500 to-blue-900 text-white shadow-lg'
                         : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                     }`}
                   >
@@ -80,7 +84,7 @@ export default function Layout({ children, currentPageName }) {
                 to={item.path}
                 className={`flex flex-col items-center gap-1 py-3 rounded-lg transition-all duration-300 ${
                   active
-                    ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white'
+                    ? 'bg-gradient-to-r from-slate-500 to-blue-900 text-white'
                     : 'text-slate-600 hover:bg-slate-100'
                 }`}
               >
@@ -102,8 +106,12 @@ export default function Layout({ children, currentPageName }) {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
-                <Zap className="w-5 h-5 text-white" />
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-slate-400 to-blue-900 flex items-center justify-center p-1.5">
+                <img 
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/693b33d51f81e96e437bf0bf/0742d052d_Quicksilverlogosimple.png" 
+                  alt="QuickSilver" 
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div>
                 <p className="font-bold">QuickSilver Instant Pay</p>

@@ -49,14 +49,18 @@ export default function Home() {
             className="text-center"
           >
             <div className="inline-block mb-6">
-              <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-2xl mx-auto">
-                <Zap className="w-10 h-10 text-white" />
+              <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-slate-400 to-blue-900 flex items-center justify-center shadow-2xl mx-auto p-3">
+                <img 
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/693b33d51f81e96e437bf0bf/0742d052d_Quicksilverlogosimple.png" 
+                  alt="QuickSilver" 
+                  className="w-full h-full object-contain"
+                />
               </div>
             </div>
             <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-cyan-200 bg-clip-text text-transparent">
               QuickSilver Instant Pay
             </h1>
-            <p className="text-xl md:text-2xl text-cyan-100 mb-4 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-slate-200 mb-4 max-w-3xl mx-auto leading-relaxed">
               Forgot your toll pass? No problem.
             </p>
             <p className="text-lg text-slate-300 max-w-2xl mx-auto">
@@ -145,7 +149,7 @@ export default function Home() {
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-slate-900">Recent Trips</h2>
               <Link to={createPageUrl('History')}>
-                <Button variant="ghost" className="text-cyan-600 hover:text-cyan-700 hover:bg-cyan-50">
+                <Button variant="ghost" className="text-slate-600 hover:text-blue-900 hover:bg-slate-50">
                   View All
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
@@ -180,21 +184,21 @@ export default function Home() {
           <h2 className="text-3xl font-bold mb-8 text-center">How It Works</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="h-16 w-16 rounded-2xl bg-cyan-500 flex items-center justify-center mx-auto mb-4">
+              <div className="h-16 w-16 rounded-2xl bg-slate-400 flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl font-bold">1</span>
               </div>
               <h3 className="font-semibold text-xl mb-2">Select Your Vehicle</h3>
               <p className="text-slate-300">Choose from your saved vehicles or add a new one</p>
             </div>
             <div className="text-center">
-              <div className="h-16 w-16 rounded-2xl bg-cyan-500 flex items-center justify-center mx-auto mb-4">
+              <div className="h-16 w-16 rounded-2xl bg-slate-400 flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl font-bold">2</span>
               </div>
               <h3 className="font-semibold text-xl mb-2">Choose Toll Location</h3>
               <p className="text-slate-300">Pick the toll road you just passed through</p>
             </div>
             <div className="text-center">
-              <div className="h-16 w-16 rounded-2xl bg-cyan-500 flex items-center justify-center mx-auto mb-4">
+              <div className="h-16 w-16 rounded-2xl bg-slate-400 flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl font-bold">3</span>
               </div>
               <h3 className="font-semibold text-xl mb-2">Pay Instantly</h3>
