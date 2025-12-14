@@ -13,6 +13,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Vehicles', icon: Car, path: createPageUrl('Vehicles') },
     { name: 'Payments', icon: CreditCard, path: createPageUrl('Payments') },
     { name: 'History', icon: Receipt, path: createPageUrl('History') },
+    { name: 'Analytics', icon: Cloud, path: createPageUrl('Analytics') },
   ];
 
   const isActive = (path) => location.pathname === path;
