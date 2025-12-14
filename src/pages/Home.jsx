@@ -39,7 +39,8 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50">
       {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900 text-white">
+      <div className="relative overflow-hidden bg-gradient-to-br from-slate-700 via-slate-800 to-blue-900 text-white">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-300/10 via-transparent to-transparent" />
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDE2djhoLThWMTZoOHptMCAwVjhoOHY4aC04ek0yMCA0OHY4aC04di04aDh6bTAtMTZ2OGgtOHYtOGg4em0xNi0xNnY4aC04di04aDh6bTE2IDB2OGgtOHYtOGg4eiIvPjwvZz48L2c+PC9zdmc+')] opacity-30" />
         <div className="relative max-w-7xl mx-auto px-6 py-20">
           <motion.div
@@ -57,7 +58,7 @@ export default function Home() {
                 />
               </div>
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-cyan-200 bg-clip-text text-transparent">
+            <h1 className="text-5xl md:text-7xl font-black mb-6 bg-gradient-to-r from-slate-200 via-white to-slate-300 bg-clip-text text-transparent drop-shadow-2xl tracking-tight">
               QuickSilver Instant Pay
             </h1>
             <p className="text-xl md:text-2xl text-slate-200 mb-4 max-w-3xl mx-auto leading-relaxed">
