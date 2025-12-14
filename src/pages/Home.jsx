@@ -129,6 +129,7 @@ export default function Home() {
             <p className="text-sm text-slate-600 mb-3">Active trip monitoring</p>
             <p className="text-3xl font-bold text-slate-900">${totalPaid.toFixed(2)} <span className="text-sm font-normal text-slate-600">total</span></p>
           </motion.div>
+        </div>
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
