@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from "@/api/base44Client";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Zap, ArrowRight, DollarSign, Car, CreditCard } from "lucide-react";
+import { Zap, ArrowRight, DollarSign, Car, CreditCard, Receipt, MapPin, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -39,33 +39,21 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50">
       {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-slate-700 via-slate-800 to-blue-900 text-white">
+      <div className="relative overflow-hidden bg-gradient-to-br from-slate-700 via-slate-800 to-blue-900 text-white py-16">
         <div className="absolute inset-0 bg-gradient-to-br from-slate-300/10 via-transparent to-transparent" />
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDE2djhoLThWMTZoOHptMCAwVjhoOHY4aC04ek0yMCA0OHY4aC04di04aDh6bTAtMTZ2OGgtOHYtOGg4em0xNi0xNnY4aC04di04aDh6bTE2IDB2OGgtOHYtOGg4eiIvPjwvZz48L2c+PC9zdmc+')] opacity-30" />
-        <div className="relative max-w-7xl mx-auto px-6 py-20">
+        <div className="relative max-w-7xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center"
           >
-            <div className="inline-block mb-6">
-              <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-slate-400 to-blue-900 flex items-center justify-center shadow-2xl mx-auto overflow-hidden">
-                <img 
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/693b33d51f81e96e437bf0bf/0742d052d_Quicksilverlogosimple.png" 
-                  alt="QuickSilver" 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-            <h1 className="text-5xl md:text-7xl font-black mb-6 bg-gradient-to-r from-slate-200 via-white to-slate-300 bg-clip-text text-transparent drop-shadow-2xl tracking-tight">
+            <h1 className="text-5xl md:text-7xl font-black mb-4 bg-gradient-to-r from-slate-200 via-white to-slate-300 bg-clip-text text-transparent drop-shadow-2xl tracking-tight">
               QuickSilver Instant Pay
             </h1>
-            <p className="text-xl md:text-2xl text-slate-200 mb-4 max-w-3xl mx-auto leading-relaxed">
-              Forgot your toll pass? No problem.
-            </p>
-            <p className="text-lg text-slate-300 max-w-2xl mx-auto">
-              Pay your tolls instantly and avoid penalties — no pass required.
+            <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto">
+              Pay tolls instantly and avoid penalties — no pass required.
             </p>
           </motion.div>
         </div>
@@ -84,40 +72,46 @@ export default function Home() {
           </motion.div>
         )}
 
-        {/* Stats Cards */}
+        {/* Quick Access Dashboard */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200"
           >
-            <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center">
-                <DollarSign className="w-7 h-7 text-white" />
+            <Link to={createPageUrl('History')}>
+              <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200 hover:shadow-xl hover:border-slate-400 transition-all cursor-pointer group">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-slate-400 to-blue-900 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Receipt className="w-7 h-7 text-white" />
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-slate-900 group-hover:translate-x-1 transition-all" />
+                </div>
+                <h3 className="font-bold text-lg text-slate-900 mb-1">Toll History</h3>
+                <p className="text-sm text-slate-600 mb-3">View all past toll payments</p>
+                <p className="text-3xl font-bold text-slate-900">{trips.length} <span className="text-sm font-normal text-slate-600">trips</span></p>
               </div>
-              <div>
-                <p className="text-sm text-slate-600 mb-1">Total Paid</p>
-                <p className="text-3xl font-bold text-slate-900">${totalPaid.toFixed(2)}</p>
-              </div>
-            </div>
+            </Link>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200"
           >
-            <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center">
-                <Car className="w-7 h-7 text-white" />
+            <Link to={createPageUrl('Payments')}>
+              <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200 hover:shadow-xl hover:border-slate-400 transition-all cursor-pointer group">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-slate-400 to-blue-900 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <CreditCard className="w-7 h-7 text-white" />
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-slate-400 group-hover:text-slate-900 group-hover:translate-x-1 transition-all" />
+                </div>
+                <h3 className="font-bold text-lg text-slate-900 mb-1">Payment Management</h3>
+                <p className="text-sm text-slate-600 mb-3">Manage your payment methods</p>
+                <p className="text-3xl font-bold text-slate-900">{paymentMethods.length} <span className="text-sm font-normal text-slate-600">cards</span></p>
               </div>
-              <div>
-                <p className="text-sm text-slate-600 mb-1">Vehicles</p>
-                <p className="text-3xl font-bold text-slate-900">{vehicles.length}</p>
-              </div>
-            </div>
+            </Link>
           </motion.div>
 
           <motion.div
@@ -126,17 +120,16 @@ export default function Home() {
             transition={{ delay: 0.3 }}
             className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200"
           >
-            <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-purple-400 to-pink-600 flex items-center justify-center">
-                <CreditCard className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-slate-600 mb-1">Payment Methods</p>
-                <p className="text-3xl font-bold text-slate-900">{paymentMethods.length}</p>
+            <div className="flex items-center justify-between mb-4">
+              <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center">
+                <Clock className="w-7 h-7 text-white" />
               </div>
             </div>
-          </motion.div>
-        </div>
+            <h3 className="font-bold text-lg text-slate-900 mb-1">Real-Time Tracking</h3>
+            <p className="text-sm text-slate-600 mb-3">Active trip monitoring</p>
+            <p className="text-3xl font-bold text-slate-900">${totalPaid.toFixed(2)} <span className="text-sm font-normal text-slate-600">total</span></p>
+          </div>
+        </motion.div>
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
