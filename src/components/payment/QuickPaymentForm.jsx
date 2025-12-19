@@ -111,6 +111,24 @@ export default function QuickPaymentForm({ onSuccess }) {
             </div>
           </div>
 
+          {paymentMethods.some(pm => pm.auto_pay_enabled) && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl"
+            >
+              <div className="flex items-center gap-2 text-green-800">
+                <Zap className="w-4 h-4" />
+                <p className="text-sm font-medium">
+                  Auto-Pay is enabled on your {paymentMethods.find(pm => pm.auto_pay_enabled)?.card_type} card
+                </p>
+              </div>
+              <p className="text-xs text-green-700 mt-1 ml-6">
+                Tolls will be automatically charged when detected via geofencing
+              </p>
+            </motion.div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="vehicle" className="text-slate-700 font-medium flex items-center gap-2">
