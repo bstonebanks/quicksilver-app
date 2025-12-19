@@ -27,7 +27,7 @@ export default function PaymentMethodCard({ paymentMethod, onDelete, onSetDefaul
         )}
         <CardContent className="p-6">
           <div className="flex justify-between items-start mb-4">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <h3 className="font-bold text-lg text-slate-900 capitalize">
                 {paymentMethod.card_type}
               </h3>
@@ -35,6 +35,11 @@ export default function PaymentMethodCard({ paymentMethod, onDelete, onSetDefaul
                 <Badge className="bg-cyan-100 text-cyan-700 border-cyan-200 border">
                   <Star className="w-3 h-3 mr-1 fill-cyan-700" />
                   Default
+                </Badge>
+              )}
+              {paymentMethod.auto_pay_enabled && (
+                <Badge className="bg-green-100 text-green-700 border-green-200 border">
+                  Auto-Pay
                 </Badge>
               )}
             </div>

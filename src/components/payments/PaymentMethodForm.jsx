@@ -14,7 +14,8 @@ export default function PaymentMethodForm({ onSubmit, onCancel, loading }) {
     expiry_month: '',
     expiry_year: '',
     cardholder_name: '',
-    is_default: false
+    is_default: false,
+    auto_pay_enabled: false
   });
 
   const handleSubmit = (e) => {
@@ -146,6 +147,34 @@ export default function PaymentMethodForm({ onSubmit, onCancel, loading }) {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="is_default"
+                  checked={formData.is_default}
+                  onChange={(e) => setFormData({ ...formData, is_default: e.target.checked })}
+                  className="h-4 w-4 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500"
+                />
+                <Label htmlFor="is_default" className="text-sm text-slate-700 cursor-pointer">
+                  Set as default payment method
+                </Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="auto_pay_enabled"
+                  checked={formData.auto_pay_enabled}
+                  onChange={(e) => setFormData({ ...formData, auto_pay_enabled: e.target.checked })}
+                  className="h-4 w-4 rounded border-slate-300 text-green-600 focus:ring-green-500"
+                />
+                <Label htmlFor="auto_pay_enabled" className="text-sm text-slate-700 cursor-pointer">
+                  Enable Auto-Pay for toll detection
+                </Label>
               </div>
             </div>
 
