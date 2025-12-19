@@ -1,25 +1,27 @@
-import Home from './pages/Home';
-import Vehicles from './pages/Vehicles';
-import Payments from './pages/Payments';
-import History from './pages/History';
-import Map from './pages/Map';
-import AutoDetect from './pages/AutoDetect';
-import Architecture from './pages/Architecture';
 import Analytics from './pages/Analytics';
+import Architecture from './pages/Architecture';
+import AutoDetect from './pages/AutoDetect';
+import History from './pages/History';
+import Home from './pages/Home';
+import Map from './pages/Map';
 import Notifications from './pages/Notifications';
+import Payments from './pages/Payments';
+import Vehicles from './pages/Vehicles';
+import TollPasses from './pages/TollPasses';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Home": Home,
-    "Vehicles": Vehicles,
-    "Payments": Payments,
-    "History": History,
-    "Map": Map,
-    "AutoDetect": AutoDetect,
-    "Architecture": Architecture,
     "Analytics": Analytics,
+    "Architecture": Architecture,
+    "AutoDetect": AutoDetect,
+    "History": History,
+    "Home": Home,
+    "Map": Map,
     "Notifications": Notifications,
+    "Payments": Payments,
+    "Vehicles": Vehicles,
+    "TollPasses": TollPasses,
 }
 
 export const pagesConfig = {
