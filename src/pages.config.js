@@ -1,4 +1,3 @@
-import Analytics from './pages/Analytics';
 import Architecture from './pages/Architecture';
 import AutoDetect from './pages/AutoDetect';
 import History from './pages/History';
@@ -12,7 +11,6 @@ import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Analytics": Analytics,
     "Architecture": Architecture,
     "AutoDetect": AutoDetect,
     "History": History,
