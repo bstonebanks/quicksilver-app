@@ -26,7 +26,10 @@ export default function AWSIntegration() {
       status: allSecretsConfigured ? 'complete' : 'pending',
       description: 'Add your AWS credentials in Base44 Dashboard',
       instructions: [
-        'Go to Dashboard → Settings → Secrets',
+        'Go to Base44 Dashboard (base44.com - not this app)',
+        'Click on your app → Settings',
+        'Look for "Environment Variables" or "Secrets" section',
+        'If you don\'t see it, backend functions may not be fully activated',
         'Add these secrets:',
         '• AWS_ACCESS_KEY_ID',
         '• AWS_SECRET_ACCESS_KEY',
@@ -96,6 +99,14 @@ export default function AWSIntegration() {
           </h1>
           <p className="text-slate-600">Connect QuickSilver to your AWS services for real-time toll detection</p>
         </div>
+
+        {/* Important Note */}
+        <Alert className="mb-6 border-blue-200 bg-blue-50">
+          <AlertDescription className="text-blue-800">
+            <strong>Can't find Secrets?</strong> Go to <strong>base44.com</strong> → Your App → Settings → Environment Variables (or Secrets tab). 
+            If backend functions are enabled, you should see a place to add key-value pairs for secrets.
+          </AlertDescription>
+        </Alert>
 
         {/* Status Overview */}
         <Card className="mb-8 border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-white">
