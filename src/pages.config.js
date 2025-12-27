@@ -8,6 +8,7 @@ import Notifications from './pages/Notifications';
 import Payments from './pages/Payments';
 import Vehicles from './pages/Vehicles';
 import TollPasses from './pages/TollPasses';
+import AWSIntegration from './pages/AWSIntegration';
 import __Layout from './Layout.jsx';
 
 
@@ -22,6 +23,7 @@ export const PAGES = {
     "Payments": Payments,
     "Vehicles": Vehicles,
     "TollPasses": TollPasses,
+    "AWSIntegration": AWSIntegration,
 }
 
 export const pagesConfig = {

@@ -13,6 +13,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Vehicles', icon: Car, path: createPageUrl('Vehicles') },
     { name: 'Toll Passes', icon: Ticket, path: createPageUrl('TollPasses') },
     { name: 'Payments', icon: CreditCard, path: createPageUrl('Payments') },
+    { name: 'AWS Setup', icon: Cloud, path: createPageUrl('AWSIntegration') },
     { name: 'History', icon: Receipt, path: createPageUrl('History') },
     { name: 'Analytics', icon: Cloud, path: createPageUrl('Analytics') },
     { name: 'Alerts', icon: Bell, path: createPageUrl('Notifications') },
