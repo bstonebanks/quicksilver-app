@@ -40,11 +40,14 @@ export default function Notifications() {
 
   const { data: notifications = [], isLoading } = useQuery({
     queryKey: ['notifications'],
-    queryFn: () => base44.entities.Notification.list('-created_date'),
+    queryFn: async () => {
+      const allNotifications = await dynamodb.notifications.list();
+      return allNotifications.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+    },
   });
 
   const markReadMutation = useMutation({
-    mutationFn: (id) => base44.entities.Notification.update(id, { is_read: true }),
+    mutationFn: (id) => dynamodb.notifications.update(id, { is_read: true }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
     },
@@ -54,7 +57,7 @@ export default function Notifications() {
     mutationFn: async () => {
       const unreadNotifs = notifications.filter(n => !n.is_read);
       await Promise.all(unreadNotifs.map(n => 
-        base44.entities.Notification.update(n.id, { is_read: true })
+        dynamodb.notifications.update(n.id, { is_read: true })
       ));
     },
     onSuccess: () => {
@@ -63,7 +66,7 @@ export default function Notifications() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Notification.delete(id),
+    mutationFn: (id) => dynamodb.notifications.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
     },

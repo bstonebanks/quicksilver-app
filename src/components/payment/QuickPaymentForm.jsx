@@ -35,9 +35,10 @@ export default function QuickPaymentForm({ onSuccess }) {
   }, []);
 
   const loadData = async () => {
+    const { dynamodb } = await import("../utils/dynamodbClient");
     const [vehiclesData, paymentMethodsData] = await Promise.all([
-      base44.entities.Vehicle.list('-created_date'),
-      base44.entities.PaymentMethod.list('-created_date')
+      dynamodb.vehicles.list(),
+      dynamodb.paymentMethods.list()
     ]);
     setVehicles(vehiclesData);
     setPaymentMethods(paymentMethodsData);
@@ -63,7 +64,8 @@ export default function QuickPaymentForm({ onSuccess }) {
 
       const confirmationNumber = `QS${Date.now().toString().slice(-8)}`;
 
-      await base44.entities.Trip.create({
+      const { dynamodb } = await import("../utils/dynamodbClient");
+      await dynamodb.trips.create({
         toll_location: tollInfo.location,
         toll_road: tollInfo.road,
         entry_time: new Date().toISOString(),

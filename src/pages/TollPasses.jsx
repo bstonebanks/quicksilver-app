@@ -36,11 +36,14 @@ export default function TollPasses() {
 
   const { data: tollPasses = [], isLoading } = useQuery({
     queryKey: ['tollPasses'],
-    queryFn: () => base44.entities.TollPass.list('-created_date'),
+    queryFn: async () => {
+      const allPasses = await dynamodb.tollPasses.list();
+      return allPasses.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+    },
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.TollPass.create(data),
+    mutationFn: (data) => dynamodb.tollPasses.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tollPasses'] });
       setShowForm(false);
@@ -49,7 +52,7 @@ export default function TollPasses() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.TollPass.update(id, data),
+    mutationFn: ({ id, data }) => dynamodb.tollPasses.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tollPasses'] });
       setEditingPass(null);
@@ -57,7 +60,7 @@ export default function TollPasses() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.TollPass.delete(id),
+    mutationFn: (id) => dynamodb.tollPasses.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tollPasses'] });
     },
