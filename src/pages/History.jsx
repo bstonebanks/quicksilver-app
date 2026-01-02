@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
+import { dynamodb } from "../components/utils/dynamodbClient";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Receipt, TrendingUp, DollarSign, Calendar } from "lucide-react";
@@ -13,7 +14,10 @@ export default function History() {
 
   const { data: trips = [], isLoading } = useQuery({
     queryKey: ['trips'],
-    queryFn: () => base44.entities.Trip.list('-created_date'),
+    queryFn: async () => {
+      const allTrips = await dynamodb.trips.list();
+      return allTrips.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+    },
   });
 
   const filteredTrips = statusFilter === 'all' 

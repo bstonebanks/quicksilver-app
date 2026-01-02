@@ -5,8 +5,8 @@ import Home from './pages/Home';
 import Map from './pages/Map';
 import Notifications from './pages/Notifications';
 import Payments from './pages/Payments';
-import Vehicles from './pages/Vehicles';
 import TollPasses from './pages/TollPasses';
+import Vehicles from './pages/Vehicles';
 import __Layout from './Layout.jsx';
 
 
@@ -18,8 +18,8 @@ export const PAGES = {
     "Map": Map,
     "Notifications": Notifications,
     "Payments": Payments,
-    "Vehicles": Vehicles,
     "TollPasses": TollPasses,
+    "Vehicles": Vehicles,
 }
 
 export const pagesConfig = {

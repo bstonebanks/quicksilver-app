@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from "@/api/base44Client";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
+import { dynamodb } from "../components/utils/dynamodbClient";
 import { motion } from "framer-motion";
 import { Zap, ArrowRight, DollarSign, Car, CreditCard, Receipt, MapPin, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,17 +16,20 @@ export default function Home() {
 
   const { data: trips = [], isLoading } = useQuery({
     queryKey: ['trips'],
-    queryFn: () => base44.entities.Trip.list('-created_date', 5),
+    queryFn: async () => {
+      const allTrips = await dynamodb.trips.list();
+      return allTrips.sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).slice(0, 5);
+    },
   });
 
   const { data: vehicles = [] } = useQuery({
     queryKey: ['vehicles'],
-    queryFn: () => base44.entities.Vehicle.list(),
+    queryFn: () => dynamodb.vehicles.list(),
   });
 
   const { data: paymentMethods = [] } = useQuery({
     queryKey: ['paymentMethods'],
-    queryFn: () => base44.entities.PaymentMethod.list(),
+    queryFn: () => dynamodb.paymentMethods.list(),
   });
 
   const handlePaymentSuccess = () => {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { dynamodb } from "../components/utils/dynamodbClient";
 import { Button } from "@/components/ui/button";
 import { Plus, CreditCard as CreditCardIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -13,11 +14,14 @@ export default function Payments() {
 
   const { data: paymentMethods = [], isLoading } = useQuery({
     queryKey: ['paymentMethods'],
-    queryFn: () => base44.entities.PaymentMethod.list('-created_date'),
+    queryFn: async () => {
+      const allMethods = await dynamodb.paymentMethods.list();
+      return allMethods.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+    },
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.PaymentMethod.create(data),
+    mutationFn: (data) => dynamodb.paymentMethods.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['paymentMethods'] });
       setShowForm(false);
@@ -25,7 +29,7 @@ export default function Payments() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.PaymentMethod.delete(id),
+    mutationFn: (id) => dynamodb.paymentMethods.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['paymentMethods'] });
     },
@@ -36,11 +40,11 @@ export default function Payments() {
       // First, unset all defaults
       await Promise.all(
         paymentMethods.filter(pm => pm.is_default).map(pm => 
-          base44.entities.PaymentMethod.update(pm.id, { is_default: false })
+          dynamodb.paymentMethods.update(pm.id, { is_default: false })
         )
       );
       // Then set the new default
-      await base44.entities.PaymentMethod.update(id, { is_default: true });
+      await dynamodb.paymentMethods.update(id, { is_default: true });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['paymentMethods'] });
