@@ -1,5 +1,6 @@
 import Architecture from './pages/Architecture';
 import AutoDetect from './pages/AutoDetect';
+import Geofences from './pages/Geofences';
 import History from './pages/History';
 import Home from './pages/Home';
 import Map from './pages/Map';
@@ -8,13 +9,13 @@ import Notifications from './pages/Notifications';
 import Payments from './pages/Payments';
 import TollPasses from './pages/TollPasses';
 import Vehicles from './pages/Vehicles';
-import Geofences from './pages/Geofences';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Architecture": Architecture,
     "AutoDetect": AutoDetect,
+    "Geofences": Geofences,
     "History": History,
     "Home": Home,
     "Map": Map,
@@ -23,7 +24,6 @@ export const PAGES = {
     "Payments": Payments,
     "TollPasses": TollPasses,
     "Vehicles": Vehicles,
-    "Geofences": Geofences,
 }
 
 export const pagesConfig = {

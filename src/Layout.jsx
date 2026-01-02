@@ -10,7 +10,6 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Home', icon: Home, path: createPageUrl('Home') },
     { name: 'Map', icon: MapPin, path: createPageUrl('Map') },
     { name: 'Auto-Detect', icon: Radio, path: createPageUrl('AutoDetect') },
-    { name: 'Geofences', icon: Radio, path: createPageUrl('Geofences') },
     { name: 'Vehicles', icon: Car, path: createPageUrl('Vehicles') },
     { name: 'Toll Passes', icon: Ticket, path: createPageUrl('TollPasses') },
     { name: 'Payments', icon: CreditCard, path: createPageUrl('Payments') },
