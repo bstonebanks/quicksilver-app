@@ -20,7 +20,7 @@ const TABLE_NAMES = {
   Notification: 'QuickSilver-Notifications',
 };
 
-async function migrateEntity(base44, userId, entityName, tableName) {
+async function migrateEntity(base44, userID, entityName, tableName) {
   try {
     const items = await base44.entities[entityName].list();
     
