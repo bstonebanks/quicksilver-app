@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = user.email;
+    const userID = user.email;
     const results = [];
 
     // Migrate all entities
