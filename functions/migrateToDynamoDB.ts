@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
 
     // Migrate all entities
     for (const [entityName, tableName] of Object.entries(TABLE_NAMES)) {
-      const result = await migrateEntity(base44, userId, entityName, tableName);
+      const result = await migrateEntity(base44, userID, entityName, tableName);
       results.push(result);
     }
 
