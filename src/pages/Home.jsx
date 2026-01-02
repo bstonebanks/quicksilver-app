@@ -64,25 +64,6 @@ export default function Home() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-12">
-        {/* Migration Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8 bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-2xl p-6 shadow-lg"
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-blue-900 font-semibold text-lg mb-1">🔄 Migrate to DynamoDB</p>
-              <p className="text-blue-700 text-sm">Transfer your existing data to AWS DynamoDB</p>
-            </div>
-            <Link to={createPageUrl('MigrateToDynamoDB')}>
-              <Button className="bg-blue-600 hover:bg-blue-700">
-                Start Migration <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-          </div>
-        </motion.div>
-
         {/* Success Message */}
         {showSuccess && (
           <motion.div
