@@ -32,7 +32,7 @@ async function migrateEntity(base44, userID, entityName, tableName) {
     for (const item of items) {
       const dynamoItem = {
         ...item,
-        userId,
+        userID,
       };
 
       await docClient.send(new PutCommand({
@@ -58,12 +58,12 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userID = user.email;
+    const userId = user.email;
     const results = [];
 
     // Migrate all entities
     for (const [entityName, tableName] of Object.entries(TABLE_NAMES)) {
-      const result = await migrateEntity(base44, userID, entityName, tableName);
+      const result = await migrateEntity(base44, userId, entityName, tableName);
       results.push(result);
     }
 
