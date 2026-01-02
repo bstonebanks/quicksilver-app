@@ -1,13 +1,5 @@
 import { LocationClient, PutGeofenceCommand, BatchPutGeofenceCommand } from 'npm:@aws-sdk/client-location';
 
-const client = new LocationClient({
-  region: Deno.env.get('AWS_REGION'),
-  credentials: {
-    accessKeyId: Deno.env.get('AWS_ACCESS_KEY_ID'),
-    secretAccessKey: Deno.env.get('AWS_SECRET_ACCESS_KEY'),
-  },
-});
-
 const TOLL_LOCATIONS = [
   {
     geofenceId: 'golden-gate-bridge',
@@ -88,6 +80,14 @@ Deno.serve(async (req) => {
     if (!collectionName) {
       return Response.json({ error: 'collectionName is required' }, { status: 400 });
     }
+
+    const client = new LocationClient({
+      region: Deno.env.get('AWS_REGION'),
+      credentials: {
+        accessKeyId: Deno.env.get('AWS_ACCESS_KEY_ID'),
+        secretAccessKey: Deno.env.get('AWS_SECRET_ACCESS_KEY'),
+      },
+    });
 
     const results = [];
 
