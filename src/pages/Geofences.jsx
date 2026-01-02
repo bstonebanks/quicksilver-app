@@ -68,7 +68,8 @@ export default function Geofences() {
 
       setResult(response.data);
     } catch (err) {
-      setError(err.message);
+      const errorMessage = err.response?.data?.error || err.message;
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -129,8 +130,12 @@ export default function Geofences() {
                 <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
                   <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-semibold text-red-900">Error</p>
-                    <p className="text-sm text-red-700">{error}</p>
+                    <p className="font-semibold text-red-900">Error Creating Geofences</p>
+                    <p className="text-sm text-red-700 mb-2">{error}</p>
+                    <p className="text-xs text-red-600">
+                      Common issues: Collection doesn't exist in AWS, invalid credentials, or incorrect region.
+                      Check <code className="bg-red-100 px-1 rounded">functions/aws/README.md</code> for setup instructions.
+                    </p>
                   </div>
                 </div>
               )}
