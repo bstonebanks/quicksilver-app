@@ -76,7 +76,7 @@ export default function QuickPaymentForm({ onSuccess }) {
         confirmation_number: confirmationNumber
       });
 
-      // Create notification for successful payment
+      // Create notification for successful payment (optional)
       try {
         await dynamodb.notifications.create({
           type: 'payment_success',
@@ -84,16 +84,10 @@ export default function QuickPaymentForm({ onSuccess }) {
           message: `Your $${tollInfo.amount.toFixed(2)} toll payment for ${tollInfo.road} at ${tollInfo.location} has been processed successfully. Confirmation: ${confirmationNumber}`,
           priority: 'medium',
           is_read: false,
-          metadata: {
-            trip_id: trip?.id,
-            amount: tollInfo.amount,
-            location: tollInfo.location,
-            road: tollInfo.road,
-            confirmation_number: confirmationNumber
-          },
-          trip_id: trip?.id
+          trip_id: trip?.id || null
         });
       } catch (notifError) {
+        // Notification creation is optional, don't block the payment flow
         console.error('Failed to create notification:', notifError);
       }
 
