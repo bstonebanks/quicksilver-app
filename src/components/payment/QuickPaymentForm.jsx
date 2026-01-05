@@ -77,21 +77,25 @@ export default function QuickPaymentForm({ onSuccess }) {
       });
 
       // Create notification for successful payment
-      await dynamodb.notifications.create({
-        type: 'payment_success',
-        title: 'Toll Payment Successful',
-        message: `Your $${tollInfo.amount.toFixed(2)} toll payment for ${tollInfo.road} at ${tollInfo.location} has been processed successfully. Confirmation: ${confirmationNumber}`,
-        priority: 'medium',
-        is_read: false,
-        metadata: {
-          trip_id: trip.id,
-          amount: tollInfo.amount,
-          location: tollInfo.location,
-          road: tollInfo.road,
-          confirmation_number: confirmationNumber
-        },
-        trip_id: trip.id
-      });
+      try {
+        await dynamodb.notifications.create({
+          type: 'payment_success',
+          title: 'Toll Payment Successful',
+          message: `Your $${tollInfo.amount.toFixed(2)} toll payment for ${tollInfo.road} at ${tollInfo.location} has been processed successfully. Confirmation: ${confirmationNumber}`,
+          priority: 'medium',
+          is_read: false,
+          metadata: {
+            trip_id: trip?.id,
+            amount: tollInfo.amount,
+            location: tollInfo.location,
+            road: tollInfo.road,
+            confirmation_number: confirmationNumber
+          },
+          trip_id: trip?.id
+        });
+      } catch (notifError) {
+        console.error('Failed to create notification:', notifError);
+      }
 
       onSuccess && onSuccess();
       setFormData({ vehicle_id: '', toll_location: '', payment_method_id: '' });
