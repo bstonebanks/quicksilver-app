@@ -1,258 +1,122 @@
-# AWS Lambda & Geofencing Setup Guide
+# QuickSilver AWS Integration Setup Guide
 
-## Overview
-This guide will help you set up AWS Lambda functions and Amazon Location Service for automatic toll detection.
+This guide will help you set up all the required AWS services for the QuickSilver automated toll detection system.
+
+## Required AWS Services
+
+1. **DynamoDB** - Store vehicle, payment, trip, and notification data
+2. **AWS Location Service** - Geofencing for toll detection
+3. **Amazon SNS** - Push notifications
+4. **Amazon SES** - Email notifications
+5. **AWS Lambda** - Event processing
 
 ## Prerequisites
-- AWS Account with administrative access
-- AWS CLI installed and configured
-- DynamoDB tables already created (QuickSilver-*)
 
-## Step 1: Amazon Location Service Setup
+- AWS Account
+- AWS CLI installed (optional but recommended)
+- AWS Access Key ID and Secret Access Key
 
-### 1.1 Create Location Tracker
-```bash
-aws location create-tracker \
-  --tracker-name QuickSilver-Tracker \
-  --position-filtering TimeBased \
-  --pricing-plan RequestBasedUsage
+## Step 1: Create AWS Credentials
+
+1. Go to AWS Console → IAM → Users
+2. Create a new user (e.g., `quicksilver-app`)
+3. Attach these policies:
+   - `AmazonDynamoDBFullAccess`
+   - `AmazonLocationFullAccess`
+   - `AmazonSNSFullAccess`
+   - `AmazonSESFullAccess`
+   - `AWSLambdaFullAccess`
+4. Generate Access Keys and save them
+
+## Step 2: Set Environment Variables in Base44
+
+Go to your Base44 app dashboard and add these secrets:
+
+```
+AWS_REGION=us-east-1
+AWS_ACCESS_KEY_ID=<your-access-key>
+AWS_SECRET_ACCESS_KEY=<your-secret-key>
+AWS_GEOFENCE_COLLECTION=quicksilver-toll-plazas
 ```
 
-### 1.2 Create Geofence Collection
-```bash
-aws location create-geofence-collection \
-  --collection-name QuickSilver-TollGeofences \
-  --pricing-plan RequestBasedUsage
-```
+## Step 3: Create DynamoDB Tables
 
-### 1.3 Create Geofences
-Run the Base44 function `createGeofences` with:
-```json
-{
-  "collectionName": "QuickSilver-TollGeofences"
-}
-```
+Run the setup function to create required tables:
+- Go to your app's Functions page
+- Find and run `setupDynamoDB`
+- Use the "create" action
 
-Or use AWS CLI:
-```bash
-aws location put-geofence \
-  --collection-name QuickSilver-TollGeofences \
-  --geofence-id golden-gate-bridge \
-  --geometry '{
-    "Circle": {
-      "Center": [-122.4783, 37.8199],
-      "Radius": 500
-    }
-  }'
-```
+This creates:
+- Vehicles table
+- PaymentMethods table
+- Trips table
+- TollPasses table
+- Notifications table
 
-### 1.4 Link Tracker to Geofence Collection
-```bash
-aws location associate-tracker-consumer \
-  --tracker-name QuickSilver-Tracker \
-  --consumer-arn arn:aws:geo:REGION:ACCOUNT_ID:geofence-collection/QuickSilver-TollGeofences
-```
+## Step 4: Set Up AWS Location Service
 
-## Step 2: Create IAM Role for Lambda
+1. Go to AWS Console → Amazon Location Service
+2. Create a Geofence Collection named `quicksilver-toll-plazas`
+3. Run the `createGeofences` function to populate toll locations
 
-### 2.1 Create Trust Policy (trust-policy.json)
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "lambda.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-```
+## Step 5: Configure Amazon SNS (Push Notifications)
 
-### 2.2 Create Role
-```bash
-aws iam create-role \
-  --role-name QuickSilver-Lambda-Role \
-  --assume-role-policy-document file://trust-policy.json
-```
+1. Go to AWS Console → Amazon SNS
+2. Create a new Topic (e.g., `quicksilver-toll-alerts`)
+3. Note the Topic ARN
+4. Add `AWS_SNS_TOPIC_ARN` to your Base44 secrets
 
-### 2.3 Attach Policies
-```bash
-# Basic Lambda execution
-aws iam attach-role-policy \
-  --role-name QuickSilver-Lambda-Role \
-  --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+## Step 6: Configure Amazon SES (Email)
 
-# DynamoDB access
-aws iam attach-role-policy \
-  --role-name QuickSilver-Lambda-Role \
-  --policy-arn arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+1. Go to AWS Console → Amazon SES
+2. Verify your sender email address
+3. If in sandbox mode, also verify recipient emails
+4. Request production access for unlimited sending
 
-# SNS access
-aws iam attach-role-policy \
-  --role-name QuickSilver-Lambda-Role \
-  --policy-arn arn:aws:iam::aws:policy/AmazonSNSFullAccess
+## Step 7: Deploy Lambda Functions
 
-# SES access
-aws iam attach-role-policy \
-  --role-name QuickSilver-Lambda-Role \
-  --policy-arn arn:aws:iam::aws:policy/AmazonSESFullAccess
-```
+### Lambda: Process Toll Crossing
+- Function: `lambdaProcessTollCrossing`
+- Trigger: AWS Location Service (Geofence ENTER events)
+- Processes toll detection and creates notifications
 
-## Step 3: Deploy Lambda Functions
+### Lambda: Process Payment
+- Function: `lambdaProcessPayment`
+- Trigger: DynamoDB Stream (Trips table)
+- Sends payment confirmations via email
 
-### 3.1 Process Toll Crossing Lambda
-```bash
-# Package function
-cd functions/aws
-zip -r lambdaProcessTollCrossing.zip lambdaProcessTollCrossing.js node_modules/
+## Step 8: Testing
 
-# Create Lambda function
-aws lambda create-function \
-  --function-name QuickSilver-ProcessTollCrossing \
-  --runtime nodejs18.x \
-  --role arn:aws:iam::ACCOUNT_ID:role/QuickSilver-Lambda-Role \
-  --handler lambdaProcessTollCrossing.handler \
-  --zip-file fileb://lambdaProcessTollCrossing.zip \
-  --environment Variables="{
-    AWS_REGION=us-east-1,
-    SNS_TOPIC_ARN=arn:aws:sns:REGION:ACCOUNT_ID:QuickSilver-Notifications
-  }" \
-  --timeout 30 \
-  --memory-size 256
-```
+1. Test DynamoDB connection by adding a vehicle
+2. Test geofence detection using the Map page
+3. Test notifications by making a test toll payment
 
-### 3.2 Process Payment Lambda
-```bash
-# Package function
-zip -r lambdaProcessPayment.zip lambdaProcessPayment.js node_modules/
+## Estimated Monthly Costs
 
-# Create Lambda function
-aws lambda create-function \
-  --function-name QuickSilver-ProcessPayment \
-  --runtime nodejs18.x \
-  --role arn:aws:iam::ACCOUNT_ID:role/QuickSilver-Lambda-Role \
-  --handler lambdaProcessPayment.handler \
-  --zip-file fileb://lambdaProcessPayment.zip \
-  --environment Variables="{
-    AWS_REGION=us-east-1,
-    SES_FROM_EMAIL=noreply@quicksilver.com,
-    STRIPE_SECRET_KEY=sk_test_...
-  }" \
-  --timeout 30 \
-  --memory-size 256
-```
+- DynamoDB: ~$5-15 (depends on usage)
+- AWS Location: ~$0.50-2 (based on tracking)
+- SNS: ~$0.50 (first million requests free)
+- SES: $0.10 per 1,000 emails
+- Lambda: Free tier covers most usage
 
-## Step 4: Set Up EventBridge Rule
-
-### 4.1 Create Rule
-```bash
-aws events put-rule \
-  --name QuickSilver-GeofenceEnter \
-  --event-pattern '{
-    "source": ["aws.geo"],
-    "detail-type": ["Location Geofence Event"],
-    "detail": {
-      "EventType": ["ENTER"]
-    }
-  }' \
-  --state ENABLED
-```
-
-### 4.2 Add Lambda as Target
-```bash
-aws events put-targets \
-  --rule QuickSilver-GeofenceEnter \
-  --targets "Id"="1","Arn"="arn:aws:lambda:REGION:ACCOUNT_ID:function:QuickSilver-ProcessTollCrossing"
-```
-
-### 4.3 Grant EventBridge Permission
-```bash
-aws lambda add-permission \
-  --function-name QuickSilver-ProcessTollCrossing \
-  --statement-id EventBridgeInvoke \
-  --action lambda:InvokeFunction \
-  --principal events.amazonaws.com \
-  --source-arn arn:aws:events:REGION:ACCOUNT_ID:rule/QuickSilver-GeofenceEnter
-```
-
-## Step 5: Set Up SNS Topic (Optional)
-
-```bash
-# Create topic
-aws sns create-topic --name QuickSilver-Notifications
-
-# Subscribe endpoints (SMS, email, etc.)
-aws sns subscribe \
-  --topic-arn arn:aws:sns:REGION:ACCOUNT_ID:QuickSilver-Notifications \
-  --protocol email \
-  --notification-endpoint user@example.com
-```
-
-## Step 6: Configure Location Tracking in App
-
-Update your Base44 app to send location updates:
-
-```javascript
-// In AutoDetect page or background service
-const updateLocation = async (latitude, longitude) => {
-  await fetch('https://tracking.geo.REGION.amazonaws.com/tracking/v0/trackers/QuickSilver-Tracker/devices/USER_ID/positions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Amz-Date': new Date().toISOString(),
-      // Add AWS Signature V4 authentication
-    },
-    body: JSON.stringify({
-      Position: [longitude, latitude],
-      SampleTime: new Date().toISOString(),
-    }),
-  });
-};
-```
-
-## Testing
-
-### Test Geofence Detection
-```bash
-# Simulate location update
-aws location batch-update-device-position \
-  --tracker-name QuickSilver-Tracker \
-  --updates DeviceId=test-user,Position=[-122.4783,37.8199],SampleTime="2024-01-01T12:00:00Z"
-```
-
-### Test Lambda Directly
-```bash
-aws lambda invoke \
-  --function-name QuickSilver-ProcessTollCrossing \
-  --payload file://test-event.json \
-  response.json
-```
-
-## Monitoring
-
-- **CloudWatch Logs**: Check Lambda execution logs
-- **DynamoDB Console**: Verify trip records are created
-- **Location Service Console**: Monitor geofence events
-
-## Cost Optimization
-
-- Use Location Service time-based position filtering
-- Set SNS topic to only essential notifications
-- Use DynamoDB on-demand pricing for variable traffic
+**Total: $6-20/month** for typical usage
 
 ## Troubleshooting
 
-1. **Geofence not triggering**: Check tracker-consumer association
-2. **Lambda not executing**: Verify EventBridge permissions
-3. **DynamoDB errors**: Ensure IAM role has correct permissions
-4. **No notifications**: Check SNS topic subscriptions
+### "Access Denied" Errors
+- Verify your IAM user has the correct permissions
+- Check that your Access Keys are correct in Base44 secrets
 
-## Next Steps
+### Geofence Not Triggering
+- Ensure Location Service collection is created
+- Verify geofences were created successfully
+- Check Lambda trigger is configured
 
-- Add Stripe payment processing
-- Configure push notifications via SNS
-- Set up CloudWatch alarms for errors
-- Implement auto-pay logic
+### Email Not Sending
+- Verify email is verified in SES
+- If in sandbox, verify recipient email too
+- Check Lambda logs in CloudWatch
+
+## Need Help?
+
+Check the AWS CloudWatch logs for detailed error messages from your Lambda functions.
