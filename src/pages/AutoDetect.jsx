@@ -14,6 +14,7 @@ export default function AutoDetect() {
   const [locationPermission, setLocationPermission] = useState('prompt');
   const [backgroundTracking, setBackgroundTracking] = useState(false);
   const [pushNotifications, setPushNotifications] = useState(true);
+  const [trackingActive, setTrackingActive] = useState(false);
   const [geofenceCount, setGeofenceCount] = useState(5);
 
   useEffect(() => {
