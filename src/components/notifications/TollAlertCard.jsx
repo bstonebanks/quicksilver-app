@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, MapPin, CreditCard, Clock } from 'lucide-react';
 import { motion } from "framer-motion";
 import { format } from "date-fns";
+import PayTollModal from "./PayTollModal";
 
 export default function TollAlertCard({ notification, onPayNow, onDismiss }) {
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const metadata = notification.metadata || {};
 
   return (
@@ -67,7 +69,7 @@ export default function TollAlertCard({ notification, onPayNow, onDismiss }) {
 
               <div className="flex gap-2">
                 <Button
-                  onClick={() => onPayNow(notification)}
+                  onClick={() => setShowPaymentModal(true)}
                   className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
                 >
                   <CreditCard className="w-4 h-4 mr-2" />
@@ -81,6 +83,17 @@ export default function TollAlertCard({ notification, onPayNow, onDismiss }) {
                   Later
                 </Button>
               </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <PayTollModal
+        notification={notification}
+        open={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        onSuccess={onDismiss}
+      />
             </div>
           </div>
         </CardContent>
