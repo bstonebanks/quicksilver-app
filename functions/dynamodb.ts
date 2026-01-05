@@ -107,6 +107,17 @@ Deno.serve(async (req) => {
     }
   } catch (error) {
     console.error('DynamoDB Error:', error);
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('Error details:', {
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
+      operation,
+      tableName
+    });
+    return Response.json({ 
+      error: error.message,
+      errorName: error.name,
+      hint: error.name === 'ResourceNotFoundException' ? 'Table does not exist. Create tables in AWS first.' : null
+    }, { status: 500 });
   }
 });
