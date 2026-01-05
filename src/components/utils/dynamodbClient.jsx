@@ -1,42 +1,70 @@
-
 import { base44 } from "@/api/base44Client";
 
-// Using Base44's built-in database instead of AWS DynamoDB
+const TABLE_NAMES = {
+  Vehicle: 'QuickSilver-Vehicles',
+  PaymentMethod: 'QuickSilver-PaymentMethods',
+  Trip: 'QuickSilver-Trips',
+  TollPass: 'QuickSilver-TollPasses',
+  Notification: 'QuickSilver-Notifications',
+};
+
+async function dynamoRequest(operation, tableName, options = {}) {
+  const response = await base44.functions.invoke('dynamodb', {
+    operation,
+    tableName,
+    ...options,
+  });
+  return response.data;
+}
+
 export const dynamodb = {
   vehicles: {
-    list: () => base44.entities.Vehicle.list(),
-    create: (data) => base44.entities.Vehicle.create(data),
-    update: (id, data) => base44.entities.Vehicle.update(id, data),
-    delete: (id) => base44.entities.Vehicle.delete(id),
-    get: (id) => base44.entities.Vehicle.filter({ id }),
+    list: () => dynamoRequest('list', TABLE_NAMES.Vehicle),
+    create: (data) => dynamoRequest('create', TABLE_NAMES.Vehicle, { data }),
+    update: (id, data) => dynamoRequest('update', TABLE_NAMES.Vehicle, { key: id, data }),
+    delete: (id) => dynamoRequest('delete', TABLE_NAMES.Vehicle, { key: id }),
+    get: (id) => dynamoRequest('get', TABLE_NAMES.Vehicle, { key: id }),
   },
   paymentMethods: {
-    list: () => base44.entities.PaymentMethod.list(),
-    create: (data) => base44.entities.PaymentMethod.create(data),
-    update: (id, data) => base44.entities.PaymentMethod.update(id, data),
-    delete: (id) => base44.entities.PaymentMethod.delete(id),
-    get: (id) => base44.entities.PaymentMethod.filter({ id }),
+    list: () => dynamoRequest('list', TABLE_NAMES.PaymentMethod),
+    create: (data) => dynamoRequest('create', TABLE_NAMES.PaymentMethod, { data }),
+    update: (id, data) => dynamoRequest('update', TABLE_NAMES.PaymentMethod, { key: id, data }),
+    delete: (id) => dynamoRequest('delete', TABLE_NAMES.PaymentMethod, { key: id }),
+    get: (id) => dynamoRequest('get', TABLE_NAMES.PaymentMethod, { key: id }),
   },
   trips: {
-    list: () => base44.entities.Trip.list(),
-    create: (data) => base44.entities.Trip.create(data),
-    update: (id, data) => base44.entities.Trip.update(id, data),
-    delete: (id) => base44.entities.Trip.delete(id),
-    get: (id) => base44.entities.Trip.filter({ id }),
-    filter: (filterData) => base44.entities.Trip.filter(filterData),
+    list: () => dynamoRequest('list', TABLE_NAMES.Trip),
+    create: (data) => dynamoRequest('create', TABLE_NAMES.Trip, { data }),
+    update: (id, data) => dynamoRequest('update', TABLE_NAMES.Trip, { key: id, data }),
+    delete: (id) => dynamoRequest('delete', TABLE_NAMES.Trip, { key: id }),
+    get: (id) => dynamoRequest('get', TABLE_NAMES.Trip, { key: id }),
+    filter: (filterData) => {
+      const filterExpressions = [];
+      const expressionAttributeValues = {};
+      
+      Object.entries(filterData).forEach(([key, value], index) => {
+        filterExpressions.push(`#${key} = :filterVal${index}`);
+        expressionAttributeValues[`:filterVal${index}`] = value;
+      });
+
+      return dynamoRequest('filter', TABLE_NAMES.Trip, {
+        filterExpression: filterExpressions.join(' AND '),
+        expressionAttributeValues,
+      });
+    },
   },
   tollPasses: {
-    list: () => base44.entities.TollPass.list(),
-    create: (data) => base44.entities.TollPass.create(data),
-    update: (id, data) => base44.entities.TollPass.update(id, data),
-    delete: (id) => base44.entities.TollPass.delete(id),
-    get: (id) => base44.entities.TollPass.filter({ id }),
+    list: () => dynamoRequest('list', TABLE_NAMES.TollPass),
+    create: (data) => dynamoRequest('create', TABLE_NAMES.TollPass, { data }),
+    update: (id, data) => dynamoRequest('update', TABLE_NAMES.TollPass, { key: id, data }),
+    delete: (id) => dynamoRequest('delete', TABLE_NAMES.TollPass, { key: id }),
+    get: (id) => dynamoRequest('get', TABLE_NAMES.TollPass, { key: id }),
   },
   notifications: {
-    list: () => base44.entities.Notification.list(),
-    create: (data) => base44.entities.Notification.create(data),
-    update: (id, data) => base44.entities.Notification.update(id, data),
-    delete: (id) => base44.entities.Notification.delete(id),
-    get: (id) => base44.entities.Notification.filter({ id }),
+    list: () => dynamoRequest('list', TABLE_NAMES.Notification),
+    create: (data) => dynamoRequest('create', TABLE_NAMES.Notification, { data }),
+    update: (id, data) => dynamoRequest('update', TABLE_NAMES.Notification, { key: id, data }),
+    delete: (id) => dynamoRequest('delete', TABLE_NAMES.Notification, { key: id }),
+    get: (id) => dynamoRequest('get', TABLE_NAMES.Notification, { key: id }),
   },
 };
