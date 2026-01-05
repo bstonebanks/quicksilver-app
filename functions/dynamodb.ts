@@ -52,9 +52,9 @@ Deno.serve(async (req) => {
       }
 
       case 'list': {
-        const result = await docClient.send(new QueryCommand({
+        const result = await docClient.send(new ScanCommand({
           TableName: tableName,
-          KeyConditionExpression: 'userID = :userID',
+          FilterExpression: 'userID = :userID',
           ExpressionAttributeValues: { ':userID': userID },
         }));
         return Response.json(result.Items || []);
