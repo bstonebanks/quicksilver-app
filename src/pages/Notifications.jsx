@@ -12,6 +12,9 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
+import TollAlertCard from "../components/notifications/TollAlertCard";
+import { useNavigate } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 
 const notificationIcons = {
   toll_detected: MapPin,
@@ -36,6 +39,7 @@ export default function Notifications() {
   const [tollAlerts, setTollAlerts] = useState(true);
   const [weeklySummary, setWeeklySummary] = useState(true);
 
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const { data: notifications = [], isLoading } = useQuery({
@@ -79,6 +83,17 @@ export default function Notifications() {
   });
 
   const unreadCount = notifications.filter(n => !n.is_read).length;
+  const tollDetections = filteredNotifications.filter(n => n.type === 'toll_detected');
+  const otherNotifications = filteredNotifications.filter(n => n.type !== 'toll_detected');
+
+  const handlePayNow = (notification) => {
+    navigate(createPageUrl('Home'));
+    markReadMutation.mutate(notification.id);
+  };
+
+  const handleDismiss = (id) => {
+    markReadMutation.mutate(id);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50">
@@ -128,13 +143,31 @@ export default function Notifications() {
               </Button>
             </div>
 
-            {/* Notifications */}
+            {/* Toll Detection Alerts - Priority Display */}
+            {tollDetections.length > 0 && (
+              <div className="space-y-4 mb-8">
+                <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                  <AlertCircle className="w-5 h-5 text-amber-600" />
+                  Pending Toll Payments ({tollDetections.length})
+                </h3>
+                {tollDetections.map((notif) => (
+                  <TollAlertCard
+                    key={notif.id}
+                    notification={notif}
+                    onPayNow={handlePayNow}
+                    onDismiss={handleDismiss}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Other Notifications */}
             {isLoading ? (
               <div className="text-center py-20">
                 <div className="w-16 h-16 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
                 <p className="text-slate-600">Loading notifications...</p>
               </div>
-            ) : filteredNotifications.length === 0 ? (
+            ) : otherNotifications.length === 0 && tollDetections.length === 0 ? (
               <Card className="border-slate-200">
                 <CardContent className="p-16 text-center">
                   <Bell className="w-16 h-16 text-slate-400 mx-auto mb-4" />
@@ -148,9 +181,13 @@ export default function Notifications() {
                   </p>
                 </CardContent>
               </Card>
-            ) : (
-              <AnimatePresence>
-                {filteredNotifications.map((notif, index) => {
+            ) : otherNotifications.length > 0 ? (
+              <div>
+                <h3 className="text-lg font-semibold text-slate-900 mb-4">
+                  Recent Activity
+                </h3>
+                <AnimatePresence>
+                  {otherNotifications.map((notif, index) => {
                   const Icon = notificationIcons[notif.type] || Bell;
                   return (
                     <motion.div
@@ -228,9 +265,10 @@ export default function Notifications() {
                       </Card>
                     </motion.div>
                   );
-                })}
-              </AnimatePresence>
-            )}
+                  })}
+                </AnimatePresence>
+              </div>
+            ) : null}
           </div>
 
           {/* Settings Sidebar */}
