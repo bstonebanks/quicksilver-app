@@ -8,6 +8,8 @@ import {
   Info, Navigation
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import LocationTracker from "../components/location/LocationTracker";
+import { toast } from "sonner";
 
 export default function AutoDetect() {
   const [autoDetectEnabled, setAutoDetectEnabled] = useState(false);
@@ -53,10 +55,23 @@ export default function AutoDetect() {
       return;
     }
     setAutoDetectEnabled(enabled);
+    setTrackingActive(enabled);
+    if (enabled) {
+      toast.success('Auto-detection enabled! We\'ll alert you when tolls are detected.');
+    } else {
+      toast.info('Auto-detection disabled');
+    }
+  };
+
+  const handleTollDetected = (toll) => {
+    toast.error(`🚨 Toll Detected: ${toll.name} - $${toll.amount.toFixed(2)}`, {
+      duration: 5000,
+    });
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50">
+      <LocationTracker enabled={trackingActive} onTollDetected={handleTollDetected} />
       <div className="max-w-4xl mx-auto px-6 py-12">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-slate-900 mb-2">Auto-Detection</h1>
