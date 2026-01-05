@@ -94,10 +94,6 @@ export default function TollAlertCard({ notification, onPayNow, onDismiss }) {
         onClose={() => setShowPaymentModal(false)}
         onSuccess={onDismiss}
       />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
     </motion.div>
   );
 }
