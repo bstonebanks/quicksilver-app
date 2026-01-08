@@ -3,7 +3,7 @@ import { useCognitoAuth } from '../auth/CognitoAuthContext';
 import { setCognitoToken } from './dynamodbClient';
 
 export default function CognitoAwareLayout({ children }) {
-  const { idToken } = useCognitoAuth();
+  const { getIdToken } = useCognitoAuth();
 
   useEffect(() => {
     const updateToken = async () => {
