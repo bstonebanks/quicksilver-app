@@ -1,11 +1,4 @@
 import React from 'react';
-
-// Polyfill for AWS SDK - must run before any AWS imports
-if (typeof window !== 'undefined') {
-  window.global = window;
-  window.process = window.process || { env: {} };
-  window.Buffer = window.Buffer || { isBuffer: () => false };
-}
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CognitoAuthProvider, useCognitoAuth } from '../components/auth/CognitoAuthContext';

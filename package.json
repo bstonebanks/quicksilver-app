@@ -79,7 +79,8 @@
     "zod": "^3.24.2",
     "@aws-sdk/client-location": "^3.600.0",
     "amazon-cognito-identity-js": "^6.3.12",
-    "@aws-sdk/client-cognito-identity-provider": "^3.600.0"
+    "@aws-sdk/client-cognito-identity-provider": "^3.600.0",
+    "aws-amplify": "^6.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

@@ -6,10 +6,14 @@ export default function CognitoAwareLayout({ children }) {
   const { idToken } = useCognitoAuth();
 
   useEffect(() => {
-    if (idToken) {
-      setCognitoToken(idToken);
-    }
-  }, [idToken]);
+    const updateToken = async () => {
+      const token = await getIdToken();
+      if (token) {
+        setCognitoToken(token);
+      }
+    };
+    updateToken();
+  }, [getIdToken]);
 
   return <>{children}</>;
 }
