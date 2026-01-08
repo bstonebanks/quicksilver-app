@@ -7,13 +7,9 @@ import {
 } from 'amazon-cognito-identity-js';
 
 const poolData = {
-  UserPoolId: import.meta.env.VITE_COGNITO_USER_POOL_ID || 'us-east-2_zXbSb43aF',
-  ClientId: import.meta.env.VITE_COGNITO_APP_CLIENT_ID || '11q1cvvdbo1o36g70r1srk9mtn'
+  UserPoolId: 'us-east-2_zXbSb43aF',
+  ClientId: '11q1cvvdbo1o36g70r1srk9mtn'
 };
-
-if (!poolData.UserPoolId || !poolData.ClientId) {
-  console.error('Cognito configuration missing. Set VITE_COGNITO_USER_POOL_ID and VITE_COGNITO_APP_CLIENT_ID');
-}
 
 const userPool = new CognitoUserPool(poolData);
 
