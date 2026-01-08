@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CognitoAuthProvider, useCognitoAuth } from './components/auth/CognitoAuthContext';
 import { Toaster } from 'sonner';
 import Layout from './Layout';
+import CognitoAwareLayout from './components/utils/CognitoAwareLayout';
 
 // Pages
 import Home from './pages/Home';
@@ -56,8 +57,9 @@ function AppRoutes() {
       
       <Route path="/*" element={
         <ProtectedRoute>
-          <Layout>
-            <Routes>
+          <CognitoAwareLayout>
+            <Layout>
+              <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/home" element={<Home />} />
               <Route path="/map" element={<Map />} />
@@ -70,8 +72,9 @@ function AppRoutes() {
               <Route path="/architecture" element={<Architecture />} />
               <Route path="/geofences" element={<Geofences />} />
               <Route path="/migratetodynamodb" element={<MigrateToDynamoDB />} />
-            </Routes>
-          </Layout>
+              </Routes>
+            </Layout>
+          </CognitoAwareLayout>
         </ProtectedRoute>
       } />
     </Routes>

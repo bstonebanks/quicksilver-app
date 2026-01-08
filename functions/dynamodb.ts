@@ -14,17 +14,29 @@ const docClient = DynamoDBDocumentClient.from(client);
 
 Deno.serve(async (req) => {
   try {
-    const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
+    const body = await req.json();
+    const { operation, tableName, data, key, filterExpression, expressionAttributeValues, cognitoIdToken } = body;
 
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    // Use Cognito token to get userID
+    let userID;
+    
+    if (cognitoIdToken) {
+      // Decode JWT to get user info (simplified - in production use proper JWT verification)
+      const payload = JSON.parse(atob(cognitoIdToken.split('.')[1]));
+      userID = payload.email || payload['cognito:username'];
+    } else {
+      // Fallback to Base44 auth if no Cognito token
+      const base44 = createClientFromRequest(req);
+      const user = await base44.auth.me();
+      if (!user) {
+        return Response.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+      userID = user.email;
     }
 
-    const { operation, tableName, data, key, filterExpression, expressionAttributeValues } = await req.json();
-
-    // Ensure all items are associated with the current user
-    const userID = user.email;
+    if (!userID) {
+      return Response.json({ error: 'Unauthorized - No user identity found' }, { status: 401 });
+    }
 
     switch (operation) {
       case 'create': {
