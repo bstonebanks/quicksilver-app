@@ -1,5 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { CognitoUserPool, CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
+import {
+  CognitoUserPool,
+  CognitoUser,
+  AuthenticationDetails,
+  CognitoUserAttribute
+} from 'amazon-cognito-identity-js';
 
 const poolData = {
   UserPoolId: import.meta.env.VITE_COGNITO_USER_POOL_ID || 'us-east-2_zXbSb43aF',
@@ -21,77 +26,70 @@ export const useCognitoAuth = () => {
 export const CognitoAuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [idToken, setIdToken] = useState(null);
+  const [session, setSession] = useState(null);
 
   useEffect(() => {
-    checkAuth();
+    checkUser();
   }, []);
 
-  const checkAuth = () => {
+  const checkUser = () => {
     const cognitoUser = userPool.getCurrentUser();
     if (cognitoUser) {
       cognitoUser.getSession((err, session) => {
-        if (err || !session.isValid()) {
-          setUser(null);
-          setIdToken(null);
+        if (err) {
           setLoading(false);
           return;
         }
-        
-        setIdToken(session.getIdToken().getJwtToken());
-        
-        cognitoUser.getUserAttributes((err, attributes) => {
-          if (err) {
-            setUser(null);
+        if (session.isValid()) {
+          cognitoUser.getUserAttributes((err, attributes) => {
+            if (!err) {
+              const userInfo = attributes.reduce((acc, attr) => {
+                acc[attr.Name] = attr.Value;
+                return acc;
+              }, {});
+              setUser({
+                email: userInfo.email,
+                full_name: userInfo.name || userInfo.email,
+                role: userInfo['custom:role'] || 'user',
+                sub: userInfo.sub
+              });
+              setSession(session);
+            }
             setLoading(false);
-            return;
-          }
-          
-          const userData = attributes.reduce((acc, attr) => {
-            acc[attr.Name] = attr.Value;
-            return acc;
-          }, {});
-          
-          setUser({
-            username: cognitoUser.getUsername(),
-            email: userData.email,
-            full_name: userData.name || userData.email,
-            ...userData
           });
+        } else {
           setLoading(false);
-        });
+        }
       });
     } else {
-      setUser(null);
-      setIdToken(null);
       setLoading(false);
     }
   };
 
-  const signUp = (email, password, name) => {
+  const signUp = (email, password, fullName) => {
     return new Promise((resolve, reject) => {
       const attributeList = [
-        { Name: 'email', Value: email },
-        { Name: 'name', Value: name }
+        new CognitoUserAttribute({ Name: 'email', Value: email }),
+        new CognitoUserAttribute({ Name: 'name', Value: fullName })
       ];
-      
+
       userPool.signUp(email, password, attributeList, null, (err, result) => {
         if (err) {
           reject(err);
           return;
         }
-        resolve(result);
+        resolve(result.user);
       });
     });
   };
 
-  const confirmSignUp = (username, code) => {
+  const confirmSignUp = (email, code) => {
     return new Promise((resolve, reject) => {
       const cognitoUser = new CognitoUser({
-        Username: username,
+        Username: email,
         Pool: userPool
       });
-      
+
       cognitoUser.confirmRegistration(code, true, (err, result) => {
         if (err) {
           reject(err);
@@ -104,21 +102,37 @@ export const CognitoAuthProvider = ({ children }) => {
 
   const signIn = (email, password) => {
     return new Promise((resolve, reject) => {
-      const authDetails = new AuthenticationDetails({
+      const authenticationDetails = new AuthenticationDetails({
         Username: email,
         Password: password
       });
-      
+
       const cognitoUser = new CognitoUser({
         Username: email,
         Pool: userPool
       });
-      
-      cognitoUser.authenticateUser(authDetails, {
+
+      cognitoUser.authenticateUser(authenticationDetails, {
         onSuccess: (session) => {
-          setIdToken(session.getIdToken().getJwtToken());
-          checkAuth();
-          resolve(session);
+          cognitoUser.getUserAttributes((err, attributes) => {
+            if (!err) {
+              const userInfo = attributes.reduce((acc, attr) => {
+                acc[attr.Name] = attr.Value;
+                return acc;
+              }, {});
+              const userData = {
+                email: userInfo.email,
+                full_name: userInfo.name || userInfo.email,
+                role: userInfo['custom:role'] || 'user',
+                sub: userInfo.sub
+              };
+              setUser(userData);
+              setSession(session);
+              resolve({ user: userData, session });
+            } else {
+              reject(err);
+            }
+          });
         },
         onFailure: (err) => {
           reject(err);
@@ -133,17 +147,27 @@ export const CognitoAuthProvider = ({ children }) => {
       cognitoUser.signOut();
     }
     setUser(null);
-    setIdToken(null);
+    setSession(null);
+  };
+
+  const getIdToken = () => {
+    return session?.getIdToken()?.getJwtToken();
+  };
+
+  const getAccessToken = () => {
+    return session?.getAccessToken()?.getJwtToken();
   };
 
   const value = {
     user,
-    idToken,
     loading,
+    session,
     signUp,
     confirmSignUp,
     signIn,
     signOut,
+    getIdToken,
+    getAccessToken,
     isAuthenticated: !!user
   };
 
