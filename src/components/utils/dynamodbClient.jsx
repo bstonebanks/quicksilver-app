@@ -8,10 +8,18 @@ const TABLE_NAMES = {
   Notification: 'QuickSilver-Notifications',
 };
 
+// Store Cognito token globally
+let cognitoIdToken = null;
+
+export const setCognitoToken = (token) => {
+  cognitoIdToken = token;
+};
+
 async function dynamoRequest(operation, tableName, options = {}) {
   const response = await base44.functions.invoke('dynamodb', {
     operation,
     tableName,
+    cognitoIdToken,
     ...options,
   });
   return response.data;
