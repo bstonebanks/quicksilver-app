@@ -10,6 +10,7 @@ import { CognitoAuthProvider, useCognitoAuth } from '../components/auth/CognitoA
 import { Toaster } from 'sonner';
 import Layout from '../Layout';
 import CognitoAwareLayout from '../components/utils/CognitoAwareLayout';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 // Pages
 import Home from './Home';
@@ -88,13 +89,15 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <CognitoAuthProvider>
-        <Router>
-          <AppRoutes />
-          <Toaster position="top-right" />
-        </Router>
-      </CognitoAuthProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <CognitoAuthProvider>
+          <Router>
+            <AppRoutes />
+            <Toaster position="top-right" />
+          </Router>
+        </CognitoAuthProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
