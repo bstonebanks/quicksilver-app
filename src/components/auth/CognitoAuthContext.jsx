@@ -11,7 +11,12 @@ const poolData = {
   ClientId: '11q1cvvdbo1o36g70r1srk9mtn'
 };
 
-const userPool = new CognitoUserPool(poolData);
+let userPool;
+try {
+  userPool = new CognitoUserPool(poolData);
+} catch (error) {
+  console.error('Failed to initialize Cognito User Pool:', error);
+}
 
 const CognitoAuthContext = createContext(null);
 
@@ -27,8 +32,14 @@ export const CognitoAuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (!userPool) {
+      setError('Cognito not configured');
+      setLoading(false);
+      return;
+    }
     checkUser();
   }, []);
 
@@ -168,6 +179,7 @@ export const CognitoAuthProvider = ({ children }) => {
     user,
     loading,
     session,
+    error,
     signUp,
     confirmSignUp,
     signIn,
@@ -176,6 +188,17 @@ export const CognitoAuthProvider = ({ children }) => {
     getAccessToken,
     isAuthenticated: !!user
   };
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-red-50">
+        <div className="text-center p-8 bg-white rounded-lg shadow-lg max-w-md">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Authentication Error</h2>
+          <p className="text-gray-700">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <CognitoAuthContext.Provider value={value}>
