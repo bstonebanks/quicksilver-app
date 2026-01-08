@@ -11,6 +11,10 @@ const poolData = {
   ClientId: import.meta.env.VITE_COGNITO_APP_CLIENT_ID || '11q1cvvdbo1o36g70r1srk9mtn'
 };
 
+if (!poolData.UserPoolId || !poolData.ClientId) {
+  console.error('Cognito configuration missing. Set VITE_COGNITO_USER_POOL_ID and VITE_COGNITO_APP_CLIENT_ID');
+}
+
 const userPool = new CognitoUserPool(poolData);
 
 const CognitoAuthContext = createContext(null);
