@@ -9,9 +9,6 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import QuickPaymentForm from "../components/payment/QuickPaymentForm";
 import TripCard from "../components/trips/TripCard";
-import { CognitoAuthProvider } from "../components/auth/CognitoAuthContext";
-import AuthWrapper from "../components/auth/AuthWrapper";
-
 function HomeContent() {
   const [showSuccess, setShowSuccess] = useState(false);
   const queryClient = useQueryClient();
@@ -212,11 +209,5 @@ function HomeContent() {
 }
 
 export default function Home() {
-  return (
-    <CognitoAuthProvider>
-      <AuthWrapper>
-        <HomeContent />
-      </AuthWrapper>
-    </CognitoAuthProvider>
-  );
+  return <HomeContent />;
 }
