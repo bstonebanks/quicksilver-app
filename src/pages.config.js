@@ -10,6 +10,7 @@ import Payments from './pages/Payments';
 import TollPasses from './pages/TollPasses';
 import Vehicles from './pages/Vehicles';
 import App from './pages/App';
+import Auth from './pages/Auth';
 import __Layout from './Layout.jsx';
 
 
@@ -26,6 +27,7 @@ export const PAGES = {
     "TollPasses": TollPasses,
     "Vehicles": Vehicles,
     "App": App,
+    "Auth": Auth,
 }
 
 export const pagesConfig = {

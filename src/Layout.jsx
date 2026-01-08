@@ -1,21 +1,19 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Zap, Home, Car, CreditCard, Receipt, MapPin, Radio, Cloud, Bell, Ticket, LogOut, User } from 'lucide-react';
+import { Zap, Home, Car, CreditCard, Receipt, MapPin, Radio, Cloud, Bell, Ticket, LogOut } from 'lucide-react';
 import { useCognitoAuth } from './components/auth/CognitoAuthContext';
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, signOut } = useCognitoAuth();
+
+  const handleLogout = () => {
+    signOut();
+    navigate(createPageUrl('Auth'));
+  };
 
   const navItems = [
     { name: 'Home', icon: Home, path: createPageUrl('Home') },
@@ -71,47 +69,22 @@ export default function Layout({ children, currentPageName }) {
                   </Link>
                 );
               })}
-              
-              {/* User Menu */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="ml-2 h-10 w-10 rounded-full">
-                    <User className="w-5 h-5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>
-                    <div className="flex flex-col">
-                      <span className="font-medium">{user?.full_name}</span>
-                      <span className="text-xs text-slate-500">{user?.email}</span>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={signOut} className="text-red-600 cursor-pointer">
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Sign Out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
             </div>
 
-            {/* Mobile Menu Button */}
-            <div className="md:hidden">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <User className="w-5 h-5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>{user?.email}</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={signOut} className="text-red-600">
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Sign Out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+            {/* User Menu */}
+            <div className="flex items-center gap-3">
+              <div className="hidden md:flex flex-col items-end">
+                <p className="text-sm font-medium text-slate-900">{user?.full_name || user?.email}</p>
+                <p className="text-xs text-slate-500">AWS Cognito</p>
+              </div>
+              <Button
+                variant="outline"
+                onClick={handleLogout}
+                className="flex items-center gap-2"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="hidden md:inline">Logout</span>
+              </Button>
             </div>
           </div>
         </div>
