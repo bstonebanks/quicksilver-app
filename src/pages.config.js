@@ -1,9 +1,6 @@
 import App from './pages/App';
 import Architecture from './pages/Architecture';
-import Auth from './pages/Auth';
 import AutoDetect from './pages/AutoDetect';
-import CognitoLogin from './pages/CognitoLogin';
-import CognitoSignup from './pages/CognitoSignup';
 import Geofences from './pages/Geofences';
 import History from './pages/History';
 import Home from './pages/Home';
@@ -19,10 +16,7 @@ import __Layout from './Layout.jsx';
 export const PAGES = {
     "App": App,
     "Architecture": Architecture,
-    "Auth": Auth,
     "AutoDetect": AutoDetect,
-    "CognitoLogin": CognitoLogin,
-    "CognitoSignup": CognitoSignup,
     "Geofences": Geofences,
     "History": History,
     "Home": Home,
