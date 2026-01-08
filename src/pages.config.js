@@ -9,8 +9,8 @@ import Notifications from './pages/Notifications';
 import Payments from './pages/Payments';
 import TollPasses from './pages/TollPasses';
 import Vehicles from './pages/Vehicles';
-import App from './pages/App';
-import Auth from './pages/Auth';
+import CognitoLogin from './pages/CognitoLogin';
+import CognitoSignup from './pages/CognitoSignup';
 import __Layout from './Layout.jsx';
 
 
@@ -26,8 +26,8 @@ export const PAGES = {
     "Payments": Payments,
     "TollPasses": TollPasses,
     "Vehicles": Vehicles,
-    "App": App,
-    "Auth": Auth,
+    "CognitoLogin": CognitoLogin,
+    "CognitoSignup": CognitoSignup,
 }
 
 export const pagesConfig = {
