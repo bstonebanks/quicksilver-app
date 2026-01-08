@@ -1,18 +1,29 @@
-import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { base44 } from '@/api/base44Client';
 import { Zap, Home, Car, CreditCard, Receipt, MapPin, Radio, Cloud, Bell, Ticket, LogOut } from 'lucide-react';
-import { useCognitoAuth } from './components/auth/CognitoAuthContext';
 import { Button } from "@/components/ui/button";
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
-  const navigate = useNavigate();
-  const { user, signOut } = useCognitoAuth();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    loadUser();
+  }, []);
+
+  const loadUser = async () => {
+    try {
+      const currentUser = await base44.auth.me();
+      setUser(currentUser);
+    } catch (error) {
+      console.log('Not authenticated');
+    }
+  };
 
   const handleLogout = () => {
-    signOut();
-    navigate(createPageUrl('Auth'));
+    base44.auth.logout();
   };
 
   const navItems = [
@@ -73,10 +84,12 @@ export default function Layout({ children, currentPageName }) {
 
             {/* User Menu */}
             <div className="flex items-center gap-3">
-              <div className="hidden md:flex flex-col items-end">
-                <p className="text-sm font-medium text-slate-900">{user?.full_name || user?.email}</p>
-                <p className="text-xs text-slate-500">AWS Cognito</p>
-              </div>
+              {user && (
+                <div className="hidden md:flex flex-col items-end">
+                  <p className="text-sm font-medium text-slate-900">{user.full_name || user.email}</p>
+                  <p className="text-xs text-slate-500">QuickSilver</p>
+                </div>
+              )}
               <Button
                 variant="outline"
                 onClick={handleLogout}
