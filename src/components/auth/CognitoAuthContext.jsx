@@ -37,35 +37,41 @@ export const CognitoAuthProvider = ({ children }) => {
   }, []);
 
   const checkUser = () => {
-    const cognitoUser = userPool.getCurrentUser();
-    if (cognitoUser) {
-      cognitoUser.getSession((err, session) => {
-        if (err) {
-          setLoading(false);
-          return;
-        }
-        if (session.isValid()) {
-          cognitoUser.getUserAttributes((err, attributes) => {
-            if (!err) {
-              const userInfo = attributes.reduce((acc, attr) => {
-                acc[attr.Name] = attr.Value;
-                return acc;
-              }, {});
-              setUser({
-                email: userInfo.email,
-                full_name: userInfo.name || userInfo.email,
-                role: userInfo['custom:role'] || 'user',
-                sub: userInfo.sub
-              });
-              setSession(session);
-            }
+    try {
+      const cognitoUser = userPool.getCurrentUser();
+      if (cognitoUser) {
+        cognitoUser.getSession((err, session) => {
+          if (err) {
+            console.error('Cognito session error:', err);
             setLoading(false);
-          });
-        } else {
-          setLoading(false);
-        }
-      });
-    } else {
+            return;
+          }
+          if (session.isValid()) {
+            cognitoUser.getUserAttributes((err, attributes) => {
+              if (!err) {
+                const userInfo = attributes.reduce((acc, attr) => {
+                  acc[attr.Name] = attr.Value;
+                  return acc;
+                }, {});
+                setUser({
+                  email: userInfo.email,
+                  full_name: userInfo.name || userInfo.email,
+                  role: userInfo['custom:role'] || 'user',
+                  sub: userInfo.sub
+                });
+                setSession(session);
+              }
+              setLoading(false);
+            });
+          } else {
+            setLoading(false);
+          }
+        });
+      } else {
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('Error checking user:', error);
       setLoading(false);
     }
   };
