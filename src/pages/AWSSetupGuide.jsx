@@ -28,13 +28,14 @@ export default function AWSSetupGuide() {
         </Alert>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-6 mb-6">
+          <TabsList className="grid w-full grid-cols-7 mb-6">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="iam">IAM Setup</TabsTrigger>
             <TabsTrigger value="dynamodb">DynamoDB</TabsTrigger>
             <TabsTrigger value="location">Location</TabsTrigger>
             <TabsTrigger value="sns">SNS</TabsTrigger>
             <TabsTrigger value="lambda">Lambda</TabsTrigger>
+            <TabsTrigger value="amplify">Amplify</TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -474,6 +475,170 @@ export default function AWSSetupGuide() {
                     <strong>Testing:</strong> Use the "Test" tab in Lambda console to create test events and verify your functions work correctly.
                   </AlertDescription>
                 </Alert>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Amplify Mobile Tab */}
+          <TabsContent value="amplify">
+            <Card>
+              <CardHeader>
+                <CardTitle>AWS Amplify Mobile Integration</CardTitle>
+                <CardDescription>Convert to mobile app with push notifications</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <Alert className="bg-blue-50 border-blue-200">
+                  <AlertCircle className="h-4 w-4 text-blue-600" />
+                  <AlertDescription className="text-blue-800">
+                    <strong>Two Approaches:</strong> Use Amplify Hosting for PWA or build native with React Native + Amplify SDK
+                  </AlertDescription>
+                </Alert>
+
+                <div>
+                  <h3 className="font-semibold text-slate-900 mb-3">Option 1: Progressive Web App (PWA) - Easiest</h3>
+                  <p className="text-sm text-slate-600 mb-3">Deploy your current web app to Amplify Hosting and add PWA features:</p>
+                  <ol className="list-decimal list-inside space-y-2 text-sm text-slate-700 ml-2">
+                    <li>Go to AWS Amplify Console</li>
+                    <li>Click "Host web app"</li>
+                    <li>Connect your Git repository (GitHub, GitLab, etc.)</li>
+                    <li>Configure build settings for React + Vite</li>
+                    <li>Deploy automatically on every commit</li>
+                    <li>Users can "Add to Home Screen" for app-like experience</li>
+                  </ol>
+                  <div className="mt-3 p-3 bg-slate-900 text-slate-100 rounded-lg font-mono text-xs overflow-x-auto">
+{`# Build Settings for Amplify
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm install
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: dist
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*`}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-slate-900 mb-3">Option 2: Native Mobile App - Full Featured</h3>
+                  <p className="text-sm text-slate-600 mb-3">Convert to React Native for iOS/Android with full native capabilities:</p>
+                  <ol className="list-decimal list-inside space-y-2 text-sm text-slate-700 ml-2">
+                    <li>Install Expo or React Native CLI</li>
+                    <li>Install AWS Amplify libraries:
+                      <div className="mt-2 p-2 bg-slate-100 rounded text-xs font-mono">
+                        npm install @aws-amplify/core @aws-amplify/push-notifications
+                      </div>
+                    </li>
+                    <li>Configure Amplify in your app:
+                      <div className="mt-2 p-2 bg-slate-100 rounded text-xs font-mono overflow-x-auto">
+{`import { Amplify } from '@aws-amplify/core';
+
+Amplify.configure({
+  Auth: {
+    Cognito: {
+      userPoolId: 'your-pool-id',
+      userPoolClientId: 'your-client-id'
+    }
+  }
+});`}
+                      </div>
+                    </li>
+                    <li>Set up Push Notifications with AWS Pinpoint</li>
+                    <li>Use Geofencing APIs for toll detection</li>
+                    <li>Build and publish to App Store/Play Store</li>
+                  </ol>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-slate-900 mb-3">Push Notifications (Native Apps)</h3>
+                  <p className="text-sm text-slate-600 mb-2">Set up AWS Pinpoint for mobile push notifications:</p>
+                  <ol className="list-decimal list-inside space-y-2 text-sm text-slate-700 ml-2">
+                    <li>Go to AWS Pinpoint Console</li>
+                    <li>Create a new project: "quicksilver-mobile"</li>
+                    <li>Configure push notification channels:
+                      <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
+                        <li><strong>iOS:</strong> Upload APNs certificate or key</li>
+                        <li><strong>Android:</strong> Add Firebase Cloud Messaging (FCM) server key</li>
+                      </ul>
+                    </li>
+                    <li>Integrate Amplify Push Notifications in your React Native app</li>
+                    <li>Request notification permissions from users</li>
+                    <li>Register device tokens with Pinpoint</li>
+                  </ol>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-slate-900 mb-3">Background Location Tracking</h3>
+                  <p className="text-sm text-slate-600 mb-2">For real-time toll detection while app is in background:</p>
+                  <ol className="list-decimal list-inside space-y-2 text-sm text-slate-700 ml-2">
+                    <li>Use React Native Geolocation or Expo Location</li>
+                    <li>Request "Always Allow" location permission</li>
+                    <li>Configure background task for location updates</li>
+                    <li>Send coordinates to AWS Location Service tracker</li>
+                    <li>AWS EventBridge triggers Lambda when entering toll geofence</li>
+                  </ol>
+                </div>
+
+                <Alert className="bg-green-50 border-green-200">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <AlertDescription className="text-green-800">
+                    <strong>Recommended:</strong> Start with Option 1 (PWA) for quick deployment, then migrate to native if you need full background tracking and offline support.
+                  </AlertDescription>
+                </Alert>
+
+                <div>
+                  <h3 className="font-semibold text-slate-900 mb-3">Key Differences</h3>
+                  <div className="grid grid-cols-2 gap-4 mt-2">
+                    <div className="p-3 bg-blue-50 rounded-lg">
+                      <div className="font-semibold text-sm text-blue-900 mb-2">PWA (Web App)</div>
+                      <ul className="text-xs text-blue-700 space-y-1">
+                        <li>✓ Fast deployment</li>
+                        <li>✓ Same codebase</li>
+                        <li>✓ Works on all platforms</li>
+                        <li>✗ Limited background tracking</li>
+                        <li>✗ No App Store presence</li>
+                      </ul>
+                    </div>
+                    <div className="p-3 bg-green-50 rounded-lg">
+                      <div className="font-semibold text-sm text-green-900 mb-2">Native App</div>
+                      <ul className="text-xs text-green-700 space-y-1">
+                        <li>✓ Full background tracking</li>
+                        <li>✓ Native push notifications</li>
+                        <li>✓ App Store distribution</li>
+                        <li>✗ Requires React Native rewrite</li>
+                        <li>✗ Longer development time</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t">
+                  <h3 className="font-semibold text-slate-900 mb-2">Documentation Links</h3>
+                  <ul className="space-y-1 text-sm">
+                    <li>
+                      <a href="https://docs.amplify.aws/react/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                        AWS Amplify for React (Web) →
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://docs.amplify.aws/react-native/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                        AWS Amplify for React Native →
+                      </a>
+                    </li>
+                    <li>
+                      <a href="https://docs.amplify.aws/react-native/build-a-backend/push-notifications/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                        Push Notifications Setup →
+                      </a>
+                    </li>
+                  </ul>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
