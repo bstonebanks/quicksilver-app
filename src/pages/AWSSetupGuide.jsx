@@ -33,7 +33,7 @@ export default function AWSSetupGuide() {
             <TabsTrigger value="iam">IAM Setup</TabsTrigger>
             <TabsTrigger value="dynamodb">DynamoDB</TabsTrigger>
             <TabsTrigger value="location">Location</TabsTrigger>
-            <TabsTrigger value="ses">SES</TabsTrigger>
+            <TabsTrigger value="sns">SNS</TabsTrigger>
             <TabsTrigger value="lambda">Lambda</TabsTrigger>
           </TabsList>
 
@@ -64,8 +64,8 @@ export default function AWSSetupGuide() {
                 <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-lg">
                   <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
                   <div>
-                    <h3 className="font-semibold text-slate-900">Simple Email Service (SES)</h3>
-                    <p className="text-sm text-slate-600">Email notifications for payment receipts and toll alerts</p>
+                    <h3 className="font-semibold text-slate-900">Simple Notification Service (SNS)</h3>
+                    <p className="text-sm text-slate-600">SMS and push notifications for payment receipts and toll alerts</p>
                   </div>
                 </div>
 
@@ -301,66 +301,93 @@ export default function AWSSetupGuide() {
             </Card>
           </TabsContent>
 
-          {/* SES Tab */}
-          <TabsContent value="ses">
+          {/* SNS Tab */}
+          <TabsContent value="sns">
             <Card>
               <CardHeader>
-                <CardTitle>Amazon SES Setup</CardTitle>
-                <CardDescription>Configure email notifications</CardDescription>
+                <CardTitle>Amazon SNS Setup</CardTitle>
+                <CardDescription>Configure SMS and push notifications</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <Alert className="bg-yellow-50 border-yellow-200">
-                  <AlertCircle className="h-4 w-4 text-yellow-600" />
-                  <AlertDescription className="text-yellow-800">
-                    <strong>Sandbox Mode:</strong> By default, SES is in sandbox mode. You can only send to verified email addresses until you request production access.
+                <Alert className="bg-blue-50 border-blue-200">
+                  <AlertCircle className="h-4 w-4 text-blue-600" />
+                  <AlertDescription className="text-blue-800">
+                    <strong>SMS Pricing:</strong> SNS SMS charges vary by country. US SMS typically costs $0.00645 per message.
                   </AlertDescription>
                 </Alert>
 
                 <div>
-                  <h3 className="font-semibold text-slate-900 mb-3">Step 1: Verify Email Address</h3>
+                  <h3 className="font-semibold text-slate-900 mb-3">Step 1: Set Up SMS Messaging</h3>
                   <ol className="list-decimal list-inside space-y-2 text-sm text-slate-700 ml-2">
-                    <li>Go to AWS Console → Amazon SES → Verified identities</li>
-                    <li>Click "Create identity"</li>
-                    <li>Select "Email address"</li>
-                    <li>Enter your email (e.g., noreply@yourdomain.com)</li>
-                    <li>Click "Create identity"</li>
-                    <li>Check your inbox and click the verification link</li>
+                    <li>Go to AWS Console → Amazon SNS → Text messaging (SMS)</li>
+                    <li>Click "Publish text message" to test SMS functionality</li>
+                    <li>For production, go to "Mobile" → "Text messaging (SMS)"</li>
+                    <li>Configure SMS settings:
+                      <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
+                        <li>Default message type: Transactional</li>
+                        <li>Account spend limit: Set appropriate limit</li>
+                        <li>Default sender ID: QuickSilver (if supported in your region)</li>
+                      </ul>
+                    </li>
                   </ol>
                 </div>
 
                 <div>
-                  <h3 className="font-semibold text-slate-900 mb-3">Step 2: Verify Domain (Recommended)</h3>
+                  <h3 className="font-semibold text-slate-900 mb-3">Step 2: Create SNS Topic (Optional - for Push)</h3>
                   <ol className="list-decimal list-inside space-y-2 text-sm text-slate-700 ml-2">
-                    <li>Click "Create identity"</li>
-                    <li>Select "Domain"</li>
-                    <li>Enter your domain (e.g., yourdomain.com)</li>
-                    <li>Copy the DNS records provided</li>
-                    <li>Add the DNS records to your domain provider</li>
-                    <li>Wait for verification (can take up to 72 hours)</li>
+                    <li>Go to SNS → Topics</li>
+                    <li>Click "Create topic"</li>
+                    <li>Type: Standard</li>
+                    <li>Name: <code className="bg-slate-100 px-2 py-0.5 rounded">quicksilver-notifications</code></li>
+                    <li>Click "Create topic"</li>
                   </ol>
                 </div>
 
                 <div>
-                  <h3 className="font-semibold text-slate-900 mb-3">Step 3: Request Production Access</h3>
+                  <h3 className="font-semibold text-slate-900 mb-3">Step 3: Store User Phone Numbers</h3>
+                  <p className="text-sm text-slate-600 mb-2">Update User entity to include phone numbers:</p>
+                  <div className="p-3 bg-slate-900 text-slate-100 rounded-lg font-mono text-sm">
+                    {`{
+  "phone_number": {
+    "type": "string",
+    "description": "User phone number for SMS (E.164 format)"
+  }
+}`}
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-slate-900 mb-3">Step 4: Request Production SMS Access</h3>
                   <ol className="list-decimal list-inside space-y-2 text-sm text-slate-700 ml-2">
-                    <li>Go to Amazon SES → Account dashboard</li>
-                    <li>Click "Request production access"</li>
+                    <li>Go to SNS → Text messaging (SMS)</li>
+                    <li>Check if you're in SMS sandbox mode</li>
+                    <li>If yes, click "Move to production"</li>
                     <li>Fill out the request form:
                       <ul className="list-disc list-inside ml-4 mt-2 space-y-1">
-                        <li>Use case: Transactional emails</li>
-                        <li>Website URL: Your app URL</li>
-                        <li>Describe your use case (toll payment receipts and notifications)</li>
+                        <li>Use case: Transactional toll payment receipts</li>
+                        <li>Expected monthly volume</li>
+                        <li>Opt-in process description</li>
                       </ul>
                     </li>
                     <li>Submit and wait for approval (usually 24-48 hours)</li>
                   </ol>
                 </div>
 
+                <Alert className="bg-yellow-50 border-yellow-200">
+                  <AlertCircle className="h-4 w-4 text-yellow-600" />
+                  <AlertDescription className="text-yellow-800">
+                    <strong>Phone Format:</strong> All phone numbers must be in E.164 format (e.g., +14155551234)
+                  </AlertDescription>
+                </Alert>
+
                 <div>
                   <h3 className="font-semibold text-slate-900 mb-3">Update Lambda Function</h3>
-                  <p className="text-sm text-slate-600 mb-2">Make sure your Lambda function uses the verified email as sender:</p>
-                  <div className="p-3 bg-slate-900 text-slate-100 rounded-lg font-mono text-sm">
-                    Source: noreply@yourdomain.com
+                  <p className="text-sm text-slate-600 mb-2">Lambda will use SNS to send SMS receipts:</p>
+                  <div className="p-3 bg-slate-900 text-slate-100 rounded-lg font-mono text-xs">
+                    {`await sns.publish({
+  PhoneNumber: userPhoneNumber,
+  Message: "Payment receipt message"
+});`}
                   </div>
                 </div>
               </CardContent>
@@ -430,7 +457,7 @@ export default function AWSSetupGuide() {
                   <p className="text-sm text-slate-600 mb-2">Ensure the Lambda execution role has these policies:</p>
                   <ul className="list-disc list-inside space-y-1 text-sm text-slate-700 ml-4">
                     <li>AmazonDynamoDBFullAccess</li>
-                    <li>AmazonSESFullAccess</li>
+                    <li>AmazonSNSFullAccess</li>
                     <li>AmazonSNSFullAccess (for notifications)</li>
                     <li>CloudWatchLogsFullAccess</li>
                   </ul>
@@ -467,13 +494,14 @@ export default function AWSSetupGuide() {
                 'Geofence collection created and populated with toll locations',
                 'Tracker created and linked to geofence collection',
                 'EventBridge rule created to route geofence events to Lambda',
-                'SES email address/domain verified',
+                'SNS SMS messaging configured and production access requested',
+                'User phone numbers added to User entity',
                 'Lambda functions created and deployed',
                 'Lambda environment variables configured',
                 'Lambda IAM roles have necessary permissions',
                 'Test geofence detection with sample coordinates',
-                'Test email sending functionality',
-                'Verify payment processing works end-to-end'
+                'Test SMS sending functionality',
+                'Verify payment processing and SMS receipts work end-to-end'
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
                   <input type="checkbox" className="w-5 h-5 rounded border-slate-300" />
