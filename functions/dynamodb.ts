@@ -13,17 +13,22 @@ const client = new DynamoDBClient({
 const docClient = DynamoDBDocumentClient.from(client);
 
 Deno.serve(async (req) => {
+  let operation, tableName;
   try {
     const body = await req.json();
-    const { operation, tableName, data, key, filterExpression, expressionAttributeValues } = body;
+    ({ operation, tableName, data, key, filterExpression, expressionAttributeValues } = body);
+    
+    console.log('DynamoDB Request:', { operation, tableName, userEmail: 'pending' });
 
     // Authenticate via Base44
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) {
+      console.error('Authentication failed - no user');
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
     const userID = user.email;
+    console.log('Authenticated user:', userID);
 
     switch (operation) {
       case 'create': {
@@ -35,10 +40,12 @@ Deno.serve(async (req) => {
           updated_date: new Date().toISOString(),
           created_by: userID,
         };
+        console.log('Creating item:', { tableName, itemId: item.id });
         await docClient.send(new PutCommand({
           TableName: tableName,
           Item: item,
         }));
+        console.log('Item created successfully');
         return Response.json(item);
       }
 
