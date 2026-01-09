@@ -17,6 +17,7 @@ import Notifications from './Notifications';
 import Architecture from './Architecture';
 import Geofences from './Geofences';
 import MigrateToDynamoDB from './MigrateToDynamoDB';
+import AWSSetupGuide from './AWSSetupGuide';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,6 +44,7 @@ function AppRoutes() {
         <Route path="/architecture" element={<Architecture />} />
         <Route path="/geofences" element={<Geofences />} />
         <Route path="/migratetodynamodb" element={<MigrateToDynamoDB />} />
+        <Route path="/awssetupguide" element={<AWSSetupGuide />} />
       </Routes>
     </Layout>
   );
