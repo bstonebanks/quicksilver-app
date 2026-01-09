@@ -2,12 +2,12 @@
 // Deploy this to AWS Lambda Console
 
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, GetCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
-import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
+import { DynamoDBDocumentClient, GetCommand, UpdateCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { SNSClient, PublishCommand } from '@aws-sdk/client-sns';
 
 const dynamoClient = new DynamoDBClient({ region: process.env.AWS_REGION });
 const docClient = DynamoDBDocumentClient.from(dynamoClient);
-const sesClient = new SESClient({ region: process.env.AWS_REGION });
+const snsClient = new SNSClient({ region: process.env.AWS_REGION });
 
 export const handler = async (event) => {
   console.log('Received payment event:', JSON.stringify(event, null, 2));
@@ -42,6 +42,15 @@ export const handler = async (event) => {
         body: JSON.stringify({ error: 'Payment method not found' }),
       };
     }
+
+    // Get user details for phone number
+    const userResult = await docClient.send(new GetCommand({
+      TableName: 'QuickSilver-Users',
+      Key: { userID },
+    }));
+
+    const user = userResult.Item;
+    const userPhoneNumber = user?.phone_number;
 
     // TODO: Process payment via Stripe
     // const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -88,32 +97,56 @@ export const handler = async (event) => {
       },
     }));
 
-    // Send email receipt via SES
-    try {
-      await sesClient.send(new SendEmailCommand({
-        Source: process.env.SES_FROM_EMAIL,
-        Destination: { ToAddresses: [userID] },
-        Message: {
-          Subject: { Data: 'QuickSilver Payment Receipt' },
-          Body: {
-            Html: {
-              Data: `
-                <h2>Payment Confirmation</h2>
-                <p>Your toll payment has been processed successfully.</p>
-                <ul>
-                  <li><strong>Location:</strong> ${trip.toll_location}</li>
-                  <li><strong>Amount:</strong> $${trip.amount.toFixed(2)}</li>
-                  <li><strong>Confirmation:</strong> ${confirmationNumber}</li>
-                  <li><strong>Date:</strong> ${new Date().toLocaleString()}</li>
-                </ul>
-                <p>Thank you for using QuickSilver!</p>
-              `,
-            },
-          },
-        },
-      }));
-    } catch (sesError) {
-      console.error('SES Error (non-critical):', sesError);
+    // Send SMS receipt via SNS
+    if (userPhoneNumber) {
+      try {
+        const smsMessage = `QuickSilver Payment Receipt\n` +
+          `Location: ${trip.toll_location}\n` +
+          `Amount: $${trip.amount.toFixed(2)}\n` +
+          `Confirmation: ${confirmationNumber}\n` +
+          `Date: ${new Date().toLocaleString()}\n` +
+          `Thank you for using QuickSilver!`;
+
+        await snsClient.send(new PublishCommand({
+          PhoneNumber: userPhoneNumber,
+          Message: smsMessage,
+          MessageAttributes: {
+            'AWS.SNS.SMS.SMSType': {
+              DataType: 'String',
+              StringValue: 'Transactional'
+            }
+          }
+        }));
+        console.log('SMS receipt sent successfully');
+      } catch (snsError) {
+        console.error('SNS Error (non-critical):', snsError);
+      }
+    } else {
+      console.log('No phone number available for SMS receipt');
+    }
+
+    // Send push notification via SNS Topic (optional)
+    const topicArn = process.env.SNS_TOPIC_ARN;
+    if (topicArn) {
+      try {
+        await snsClient.send(new PublishCommand({
+          TopicArn: topicArn,
+          Subject: 'QuickSilver Payment Receipt',
+          Message: JSON.stringify({
+            default: `Payment of $${trip.amount.toFixed(2)} processed successfully. Confirmation: ${confirmationNumber}`,
+            title: 'Payment Successful',
+            body: `$${trip.amount.toFixed(2)} paid at ${trip.toll_location}`,
+            data: {
+              trip_id: tripId,
+              confirmation_number: confirmationNumber,
+            }
+          }),
+          MessageStructure: 'json'
+        }));
+        console.log('Push notification sent successfully');
+      } catch (pushError) {
+        console.error('Push notification error (non-critical):', pushError);
+      }
     }
 
     return {
