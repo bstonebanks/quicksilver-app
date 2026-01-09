@@ -11,6 +11,7 @@ import Notifications from './pages/Notifications';
 import Payments from './pages/Payments';
 import TollPasses from './pages/TollPasses';
 import Vehicles from './pages/Vehicles';
+import DebugDynamoDB from './pages/DebugDynamoDB';
 import __Layout from './Layout.jsx';
 
 
@@ -28,6 +29,7 @@ export const PAGES = {
     "Payments": Payments,
     "TollPasses": TollPasses,
     "Vehicles": Vehicles,
+    "DebugDynamoDB": DebugDynamoDB,
 }
 
 export const pagesConfig = {
