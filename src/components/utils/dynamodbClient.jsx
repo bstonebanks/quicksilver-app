@@ -1,75 +1,151 @@
 import { base44 } from "@/api/base44Client";
 
+/**
+ * DynamoDB table names
+ */
 const TABLE_NAMES = {
-  Vehicle: 'QuickSilver-Vehicles',
-  PaymentMethod: 'QuickSilver-PaymentMethods',
-  Trip: 'QuickSilver-Trips',
-  TollPass: 'QuickSilver-TollPasses',
-  Notification: 'QuickSilver-Notifications',
+  Vehicle: "QuickSilver-Vehicles",
+  PaymentMethod: "QuickSilver-PaymentMethods",
+  Trip: "QuickSilver-Trips",
+  TollPass: "QuickSilver-TollPasses",
+  Notification: "QuickSilver-Notifications",
 };
 
+/**
+ * Generic request wrapper to Base44 dynamodb function
+ */
 async function dynamoRequest(operation, tableName, options = {}) {
-  const response = await base44.functions.invoke('dynamodb', {
+  const response = await base44.functions.invoke("dynamodb", {
     operation,
     tableName,
     ...options,
   });
-  return response.data;
+
+  return response?.data;
 }
 
+/**
+ * DynamoDB client with composite-key awareness
+ */
 export const dynamodb = {
   vehicles: {
-    list: () => dynamoRequest('list', TABLE_NAMES.Vehicle),
-    create: async (data) => {
-      console.log('Creating vehicle with data:', data);
-      const result = await dynamoRequest('create', TABLE_NAMES.Vehicle, { data });
-      console.log('Create result:', result);
-      return result;
-    },
-    update: (id, data) => dynamoRequest('update', TABLE_NAMES.Vehicle, { key: id, data }),
-    delete: (id) => dynamoRequest('delete', TABLE_NAMES.Vehicle, { key: id }),
-    get: (id) => dynamoRequest('get', TABLE_NAMES.Vehicle, { key: id }),
-  },
-  paymentMethods: {
-    list: () => dynamoRequest('list', TABLE_NAMES.PaymentMethod),
-    create: (data) => dynamoRequest('create', TABLE_NAMES.PaymentMethod, { data }),
-    update: (id, data) => dynamoRequest('update', TABLE_NAMES.PaymentMethod, { key: id, data }),
-    delete: (id) => dynamoRequest('delete', TABLE_NAMES.PaymentMethod, { key: id }),
-    get: (id) => dynamoRequest('get', TABLE_NAMES.PaymentMethod, { key: id }),
-  },
-  trips: {
-    list: () => dynamoRequest('list', TABLE_NAMES.Trip),
-    create: (data) => dynamoRequest('create', TABLE_NAMES.Trip, { data }),
-    update: (id, data) => dynamoRequest('update', TABLE_NAMES.Trip, { key: id, data }),
-    delete: (id) => dynamoRequest('delete', TABLE_NAMES.Trip, { key: id }),
-    get: (id) => dynamoRequest('get', TABLE_NAMES.Trip, { key: id }),
-    filter: (filterData) => {
-      const filterExpressions = [];
-      const expressionAttributeValues = {};
-      
-      Object.entries(filterData).forEach(([key, value], index) => {
-        filterExpressions.push(`#${key} = :filterVal${index}`);
-        expressionAttributeValues[`:filterVal${index}`] = value;
-      });
+    list: (userID) =>
+      dynamoRequest("filter", TABLE_NAMES.Vehicle, {
+        filterExpression: "userID = :uid",
+        expressionAttributeValues: {
+          ":uid": userID,
+        },
+      }),
 
-      return dynamoRequest('filter', TABLE_NAMES.Trip, {
-        filterExpression: filterExpressions.join(' AND '),
-        expressionAttributeValues,
-      });
-    },
+    create: (userID, data) =>
+      dynamoRequest("create", TABLE_NAMES.Vehicle, {
+        data: {
+          userID,
+          id: data?.id ?? crypto.randomUUID(),
+          ...data,
+        },
+      }),
+
+    get: (userID, id) =>
+      dynamoRequest("get", TABLE_NAMES.Vehicle, {
+        key: { userID, id },
+      }),
+
+    update: (userID, id, data) =>
+      dynamoRequest("update", TABLE_NAMES.Vehicle, {
+        key: { userID, id },
+        data,
+      }),
+
+    delete: (userID, id) =>
+      dynamoRequest("delete", TABLE_NAMES.Vehicle, {
+        key: { userID, id },
+      }),
   },
+
+  paymentMethods: {
+    create: (userID, data) =>
+      dynamoRequest("create", TABLE_NAMES.PaymentMethod, {
+        data: {
+          userID,
+          id: data?.id ?? crypto.randomUUID(),
+          ...data,
+        },
+      }),
+
+    get: (userID, id) =>
+      dynamoRequest("get", TABLE_NAMES.PaymentMethod, {
+        key: { userID, id },
+      }),
+
+    update: (userID, id, data) =>
+      dynamoRequest("update", TABLE_NAMES.PaymentMethod, {
+        key: { userID, id },
+        data,
+      }),
+
+    delete: (userID, id) =>
+      dynamoRequest("delete", TABLE_NAMES.PaymentMethod, {
+        key: { userID, id },
+      }),
+  },
+
+  trips: {
+    create: (userID, data) =>
+      dynamoRequest("create", TABLE_NAMES.Trip, {
+        data: {
+          userID,
+          id: data?.id ?? crypto.randomUUID(),
+          ...data,
+        },
+      }),
+
+    get: (userID, id) =>
+      dynamoRequest("get", TABLE_NAMES.Trip, {
+        key: { userID, id },
+      }),
+
+    list: (userID) =>
+      dynamoRequest("filter", TABLE_NAMES.Trip, {
+        filterExpression: "userID = :uid",
+        expressionAttributeValues: {
+          ":uid": userID,
+        },
+      }),
+  },
+
   tollPasses: {
-    list: () => dynamoRequest('list', TABLE_NAMES.TollPass),
-    create: (data) => dynamoRequest('create', TABLE_NAMES.TollPass, { data }),
-    update: (id, data) => dynamoRequest('update', TABLE_NAMES.TollPass, { key: id, data }),
-    delete: (id) => dynamoRequest('delete', TABLE_NAMES.TollPass, { key: id }),
-    get: (id) => dynamoRequest('get', TABLE_NAMES.TollPass, { key: id }),
+    create: (userID, data) =>
+      dynamoRequest("create", TABLE_NAMES.TollPass, {
+        data: {
+          userID,
+          id: data?.id ?? crypto.randomUUID(),
+          ...data,
+        },
+      }),
+
+    get: (userID, id) =>
+      dynamoRequest("get", TABLE_NAMES.TollPass, {
+        key: { userID, id },
+      }),
   },
+
   notifications: {
-    list: () => dynamoRequest('list', TABLE_NAMES.Notification),
-    create: (data) => dynamoRequest('create', TABLE_NAMES.Notification, { data }),
-    update: (id, data) => dynamoRequest('update', TABLE_NAMES.Notification, { key: id, data }),
-    delete: (id) => dynamoRequest('delete', TABLE_NAMES.Notification, { key: id }),
-    get: (id) => dynamoRequest('get', TABLE_NAMES.Notification, { key: id }),
+    create: (userID, data) =>
+      dynamoRequest("create", TABLE_NAMES.Notification, {
+        data: {
+          userID,
+          id: data?.id ?? crypto.randomUUID(),
+          ...data,
+        },
+      }),
+
+    list: (userID) =>
+      dynamoRequest("filter", TABLE_NAMES.Notification, {
+        filterExpression: "userID = :uid",
+        expressionAttributeValues: {
+          ":uid": userID,
+        },
+      }),
   },
 };
