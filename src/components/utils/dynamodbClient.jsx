@@ -20,7 +20,12 @@ async function dynamoRequest(operation, tableName, options = {}) {
 export const dynamodb = {
   vehicles: {
     list: () => dynamoRequest('list', TABLE_NAMES.Vehicle),
-    create: (data) => dynamoRequest('create', TABLE_NAMES.Vehicle, { data }),
+    create: async (data) => {
+      console.log('Creating vehicle with data:', data);
+      const result = await dynamoRequest('create', TABLE_NAMES.Vehicle, { data });
+      console.log('Create result:', result);
+      return result;
+    },
     update: (id, data) => dynamoRequest('update', TABLE_NAMES.Vehicle, { key: id, data }),
     delete: (id) => dynamoRequest('delete', TABLE_NAMES.Vehicle, { key: id }),
     get: (id) => dynamoRequest('get', TABLE_NAMES.Vehicle, { key: id }),
