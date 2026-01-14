@@ -64,6 +64,14 @@ export const dynamodb = {
   },
 
   paymentMethods: {
+    list: (userID) =>
+      dynamoRequest("filter", TABLE_NAMES.PaymentMethod, {
+        filterExpression: "userID = :uid",
+        expressionAttributeValues: {
+          ":uid": userID,
+        },
+      }),
+
     create: (userID, data) =>
       dynamoRequest("create", TABLE_NAMES.PaymentMethod, {
         data: {
@@ -87,6 +95,7 @@ export const dynamodb = {
     delete: (userID, id) =>
       dynamoRequest("delete", TABLE_NAMES.PaymentMethod, {
         key: { userID, id },
+        data,
       }),
   },
 
@@ -115,6 +124,14 @@ export const dynamodb = {
   },
 
   tollPasses: {
+    list: (userID) =>
+      dynamoRequest("filter", TABLE_NAMES.TollPass, {
+        filterExpression: "userID = :uid",
+        expressionAttributeValues: {
+          ":uid": userID,
+        },
+      }),
+
     create: (userID, data) =>
       dynamoRequest("create", TABLE_NAMES.TollPass, {
         data: {
@@ -126,6 +143,17 @@ export const dynamodb = {
 
     get: (userID, id) =>
       dynamoRequest("get", TABLE_NAMES.TollPass, {
+        key: { userID, id },
+      }),
+
+    update: (userID, id, data) =>
+      dynamoRequest("update", TABLE_NAMES.TollPass, {
+        key: { userID, id },
+        data,
+      }),
+
+    delete: (userID, id) =>
+      dynamoRequest("delete", TABLE_NAMES.TollPass, {
         key: { userID, id },
       }),
   },
