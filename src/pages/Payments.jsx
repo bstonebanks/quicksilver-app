@@ -15,13 +15,17 @@ export default function Payments() {
   const { data: paymentMethods = [], isLoading } = useQuery({
     queryKey: ['paymentMethods'],
     queryFn: async () => {
-      const allMethods = await dynamodb.paymentMethods.list();
+      const user = await base44.auth.me();
+      const allMethods = await dynamodb.paymentMethods.list(user.email);
       return allMethods.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
     },
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => dynamodb.paymentMethods.create(data),
+    mutationFn: async (data) => {
+      const user = await base44.auth.me();
+      return dynamodb.paymentMethods.create(user.email, data);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['paymentMethods'] });
       setShowForm(false);
@@ -29,7 +33,10 @@ export default function Payments() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => dynamodb.paymentMethods.delete(id),
+    mutationFn: async (id) => {
+      const user = await base44.auth.me();
+      return dynamodb.paymentMethods.delete(user.email, id);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['paymentMethods'] });
     },
@@ -37,14 +44,15 @@ export default function Payments() {
 
   const setDefaultMutation = useMutation({
     mutationFn: async (id) => {
+      const user = await base44.auth.me();
       // First, unset all defaults
       await Promise.all(
         paymentMethods.filter(pm => pm.is_default).map(pm => 
-          dynamodb.paymentMethods.update(pm.id, { is_default: false })
+          dynamodb.paymentMethods.update(user.email, pm.id, { is_default: false })
         )
       );
       // Then set the new default
-      await dynamodb.paymentMethods.update(id, { is_default: true });
+      await dynamodb.paymentMethods.update(user.email, id, { is_default: true });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['paymentMethods'] });

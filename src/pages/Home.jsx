@@ -16,19 +16,26 @@ function HomeContent() {
   const { data: trips = [], isLoading } = useQuery({
     queryKey: ['trips'],
     queryFn: async () => {
-      const allTrips = await dynamodb.trips.list();
+      const user = await base44.auth.me();
+      const allTrips = await dynamodb.trips.list(user.email);
       return allTrips.sort((a, b) => new Date(b.created_date) - new Date(a.created_date)).slice(0, 5);
     },
   });
 
   const { data: vehicles = [] } = useQuery({
     queryKey: ['vehicles'],
-    queryFn: () => dynamodb.vehicles.list(),
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      return dynamodb.vehicles.list(user.email);
+    },
   });
 
   const { data: paymentMethods = [] } = useQuery({
     queryKey: ['paymentMethods'],
-    queryFn: () => dynamodb.paymentMethods.list(),
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      return dynamodb.paymentMethods.list(user.email);
+    },
   });
 
   const handlePaymentSuccess = () => {

@@ -37,13 +37,17 @@ export default function TollPasses() {
   const { data: tollPasses = [], isLoading } = useQuery({
     queryKey: ['tollPasses'],
     queryFn: async () => {
-      const allPasses = await dynamodb.tollPasses.list();
+      const user = await base44.auth.me();
+      const allPasses = await dynamodb.tollPasses.list(user.email);
       return allPasses.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
     },
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => dynamodb.tollPasses.create(data),
+    mutationFn: async (data) => {
+      const user = await base44.auth.me();
+      return dynamodb.tollPasses.create(user.email, data);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tollPasses'] });
       setShowForm(false);
@@ -52,7 +56,10 @@ export default function TollPasses() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => dynamodb.tollPasses.update(id, data),
+    mutationFn: async ({ id, data }) => {
+      const user = await base44.auth.me();
+      return dynamodb.tollPasses.update(user.email, id, data);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tollPasses'] });
       setEditingPass(null);
@@ -60,7 +67,10 @@ export default function TollPasses() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => dynamodb.tollPasses.delete(id),
+    mutationFn: async (id) => {
+      const user = await base44.auth.me();
+      return dynamodb.tollPasses.delete(user.email, id);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tollPasses'] });
     },
