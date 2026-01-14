@@ -2,6 +2,7 @@ import AWSSetupGuide from './pages/AWSSetupGuide';
 import App from './pages/App';
 import Architecture from './pages/Architecture';
 import AutoDetect from './pages/AutoDetect';
+import DebugDynamoDB from './pages/DebugDynamoDB';
 import Geofences from './pages/Geofences';
 import History from './pages/History';
 import Home from './pages/Home';
@@ -11,7 +12,6 @@ import Notifications from './pages/Notifications';
 import Payments from './pages/Payments';
 import TollPasses from './pages/TollPasses';
 import Vehicles from './pages/Vehicles';
-import DebugDynamoDB from './pages/DebugDynamoDB';
 import __Layout from './Layout.jsx';
 
 
@@ -20,6 +20,7 @@ export const PAGES = {
     "App": App,
     "Architecture": Architecture,
     "AutoDetect": AutoDetect,
+    "DebugDynamoDB": DebugDynamoDB,
     "Geofences": Geofences,
     "History": History,
     "Home": Home,
@@ -29,7 +30,6 @@ export const PAGES = {
     "Payments": Payments,
     "TollPasses": TollPasses,
     "Vehicles": Vehicles,
-    "DebugDynamoDB": DebugDynamoDB,
 }
 
 export const pagesConfig = {

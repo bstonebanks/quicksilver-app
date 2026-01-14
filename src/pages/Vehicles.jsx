@@ -15,13 +15,17 @@ export default function Vehicles() {
   const { data: vehicles = [], isLoading } = useQuery({
     queryKey: ['vehicles'],
     queryFn: async () => {
-      const allVehicles = await dynamodb.vehicles.list();
+      const user = await base44.auth.me();
+      const allVehicles = await dynamodb.vehicles.list(user.email);
       return allVehicles.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
     },
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => dynamodb.vehicles.create(data),
+    mutationFn: async (data) => {
+      const user = await base44.auth.me();
+      return dynamodb.vehicles.create(user.email, data);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vehicles'] });
       setShowForm(false);
@@ -29,7 +33,10 @@ export default function Vehicles() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => dynamodb.vehicles.delete(id),
+    mutationFn: async (id) => {
+      const user = await base44.auth.me();
+      return dynamodb.vehicles.delete(user.email, id);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vehicles'] });
     },
@@ -37,14 +44,15 @@ export default function Vehicles() {
 
   const setPrimaryMutation = useMutation({
     mutationFn: async (id) => {
+      const user = await base44.auth.me();
       // First, unset all primaries
       await Promise.all(
         vehicles.filter(v => v.is_primary).map(v => 
-          dynamodb.vehicles.update(v.id, { is_primary: false })
+          dynamodb.vehicles.update(user.email, v.id, { is_primary: false })
         )
       );
       // Then set the new primary
-      await dynamodb.vehicles.update(id, { is_primary: true });
+      await dynamodb.vehicles.update(user.email, id, { is_primary: true });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vehicles'] });
