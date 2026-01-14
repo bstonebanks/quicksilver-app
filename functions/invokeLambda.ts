@@ -1,8 +1,8 @@
-import { LambdaClient, InvokeCommand } from 'npm:@aws-sdk/client-lambda';
+import { LambdaClient, InvokeCommand } from 'npm:@aws-sdk/client-lambda@3.600.0';
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 const lambdaClient = new LambdaClient({
-  region: Deno.env.get('AWS_REGION'),
+  region: Deno.env.get('AWS_REGION') || 'us-east-1',
   credentials: {
     accessKeyId: Deno.env.get('AWS_ACCESS_KEY_ID'),
     secretAccessKey: Deno.env.get('AWS_SECRET_ACCESS_KEY'),
