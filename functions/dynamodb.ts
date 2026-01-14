@@ -67,10 +67,9 @@ Deno.serve(async (req) => {
       }
 
       case 'filter': {
-        const result = await docClient.send(new QueryCommand({
+        const result = await docClient.send(new ScanCommand({
           TableName: tableName,
-          KeyConditionExpression: 'userID = :userID',
-          FilterExpression: filterExpression,
+          FilterExpression: `userID = :userID${filterExpression ? ' AND ' + filterExpression : ''}`,
           ExpressionAttributeValues: {
             ':userID': userID,
             ...expressionAttributeValues,
