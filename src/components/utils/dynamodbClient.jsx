@@ -15,13 +15,22 @@ const TABLE_NAMES = {
  * Generic request wrapper to Base44 dynamodb function
  */
 async function dynamoRequest(operation, tableName, options = {}) {
-  const response = await base44.functions.invoke("dynamodb", {
-    operation,
-    tableName,
-    ...options,
-  });
+  try {
+    const response = await base44.functions.invoke("dynamodb", {
+      operation,
+      tableName,
+      ...options,
+    });
 
-  return response?.data;
+    return response?.data;
+  } catch (error) {
+    // Handle table not found errors gracefully
+    if (error.response?.data?.errorName === 'ResourceNotFoundException') {
+      console.warn(`DynamoDB table ${tableName} not found. Please create it in AWS.`);
+      return [];
+    }
+    throw error;
+  }
 }
 
 /**
