@@ -104,7 +104,6 @@ export const dynamodb = {
     delete: (userID, id) =>
       dynamoRequest("delete", TABLE_NAMES.PaymentMethod, {
         key: { userID, id },
-        data,
       }),
   },
 
