@@ -23,19 +23,31 @@ export default function Vehicles() {
 
   const createMutation = useMutation({
     mutationFn: async (data) => {
-      const user = await base44.auth.me();
-      console.log('Creating vehicle with data:', data);
-      const result = await dynamodb.vehicles.create(user.email, data);
-      console.log('Vehicle created:', result);
-      return result;
+      try {
+        const user = await base44.auth.me();
+        console.log('Creating vehicle with data:', data);
+        const result = await dynamodb.vehicles.create(user.email, data);
+        console.log('Vehicle created successfully:', result);
+        return result;
+      } catch (error) {
+        console.error('Detailed error:', {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status,
+          fullError: error
+        });
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vehicles'] });
       setShowForm(false);
     },
     onError: (error) => {
-      console.error('Failed to create vehicle:', error);
-      alert('Failed to add vehicle. Please check the console for details.');
+      const errorMsg = error.response?.data?.error || error.message || 'Unknown error';
+      const hint = error.response?.data?.hint || '';
+      console.error('Failed to create vehicle:', errorMsg, hint);
+      alert(`Failed to add vehicle: ${errorMsg}${hint ? '\n\n' + hint : ''}`);
     },
   });
 
