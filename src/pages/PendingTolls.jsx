@@ -16,8 +16,9 @@ export default function PendingTolls() {
   const { data: events = [], isLoading } = useQuery({
     queryKey: ['geofenceEvents'],
     queryFn: async () => {
-      const allEvents = await base44.entities.GeofenceEvent.filter({ status: 'pending' }, '-detected_at');
-      return allEvents;
+      const allEvents = await base44.entities.GeofenceEvent.list('-detected_at');
+      // Show both pending and confirmed events
+      return allEvents.filter(e => e.status === 'pending' || e.status === 'confirmed');
     },
   });
 
@@ -86,7 +87,10 @@ export default function PendingTolls() {
           confirmation_number: `QS-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
         });
 
-        await base44.entities.GeofenceEvent.update(event.id, { status: 'paid' });
+        await base44.entities.GeofenceEvent.update(event.id, { 
+          status: 'paid',
+          trip_id: `QS-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+        });
       }
 
       return confirmedEvents.length;
