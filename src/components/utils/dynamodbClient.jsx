@@ -48,11 +48,7 @@ export const dynamodb = {
 
     create: (userID, data) =>
       dynamoRequest("create", TABLE_NAMES.Vehicle, {
-        data: {
-          userID,
-          id: data?.id ?? crypto.randomUUID(),
-          ...data,
-        },
+        data,
       }),
 
     get: (userID, id) =>

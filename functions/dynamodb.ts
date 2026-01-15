@@ -32,20 +32,21 @@ Deno.serve(async (req) => {
 
     switch (operation) {
       case 'create': {
+        console.log('Create - received data:', JSON.stringify(data));
         const item = {
+          ...data,
           userID,
           id: data?.id || crypto.randomUUID(),
-          ...data,
           created_date: new Date().toISOString(),
           updated_date: new Date().toISOString(),
           created_by: userID,
         };
-        console.log('Creating item:', { tableName, itemId: item.id, item });
+        console.log('Create - prepared item:', JSON.stringify(item));
         await docClient.send(new PutCommand({
           TableName: tableName,
           Item: item,
         }));
-        console.log('Item created successfully');
+        console.log('Item created successfully:', item.id);
         return Response.json(item);
       }
 
