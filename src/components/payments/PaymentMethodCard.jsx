@@ -18,14 +18,15 @@ const walletColors = {
 };
 
 export default function PaymentMethodCard({ paymentMethod, onDelete, onSetDefault, index }) {
-  const isWallet = paymentMethod.payment_type === 'apple_pay' || paymentMethod.payment_type === 'google_pay';
+  const paymentType = paymentMethod.payment_type || 'credit_card';
+  const isWallet = paymentType === 'apple_pay' || paymentType === 'google_pay';
   const cardColor = isWallet 
-    ? walletColors[paymentMethod.payment_type] 
+    ? walletColors[paymentType] 
     : (cardColors[paymentMethod.card_type] || 'from-slate-500 to-slate-700');
   
   const displayName = isWallet 
-    ? (paymentMethod.payment_type === 'apple_pay' ? 'Apple Pay' : 'Google Pay')
-    : paymentMethod.card_type;
+    ? (paymentType === 'apple_pay' ? 'Apple Pay' : 'Google Pay')
+    : (paymentMethod.card_type || 'Card');
 
   return (
     <motion.div
