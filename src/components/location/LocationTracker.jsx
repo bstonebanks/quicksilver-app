@@ -7,6 +7,13 @@ const TOLL_LOCATIONS = [
   { id: 'bay-bridge', name: 'Bay Bridge', road: 'I-80', lat: 37.7983, lng: -122.3778, amount: 7.00, radius: 500 },
   { id: 'hwy73-macarthur', name: 'MacArthur Blvd', road: 'Highway 73', lat: 33.6595, lng: -117.8443, amount: 6.50, radius: 400 },
   { id: 'hwy73-bonita', name: 'Bonita Canyon', road: 'Highway 73', lat: 33.6446, lng: -117.8253, amount: 5.25, radius: 400 },
+  { id: 'dulles-toll', name: 'Dulles Toll Road', road: 'VA-267', lat: 38.9587, lng: -77.3579, amount: 4.25, radius: 400 },
+  { id: 'chesapeake-bridge', name: 'Chesapeake Bay Bridge', road: 'US-50/301', lat: 38.9898, lng: -76.3775, amount: 6.00, radius: 500 },
+  { id: 'i95-express', name: 'I-95 Express Lanes', road: 'I-95', lat: 38.7893, lng: -77.2011, amount: 5.50, radius: 400 },
+  { id: 'gw-bridge', name: 'George Washington Bridge', road: 'I-95', lat: 40.8517, lng: -73.9527, amount: 16.00, radius: 500 },
+  { id: 'nj-turnpike', name: 'New Jersey Turnpike', road: 'I-95', lat: 40.6895, lng: -74.2424, amount: 3.50, radius: 400 },
+  { id: 'garden-state', name: 'Garden State Parkway', road: 'GSP', lat: 40.9234, lng: -74.0682, amount: 1.50, radius: 400 },
+  { id: 'lincoln-tunnel', name: 'Lincoln Tunnel', road: 'NJ-495', lat: 40.7614, lng: -74.0055, amount: 17.00, radius: 400 },
 ];
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -210,8 +217,8 @@ export default function LocationTracker({ enabled, onTollDetected }) {
       (error) => console.error('Location error:', error),
       {
         enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0
+        timeout: 27000,
+        maximumAge: 30000
       }
     );
 
