@@ -39,11 +39,16 @@ export default function AutoDetect() {
       navigator.geolocation.getCurrentPosition(
         () => {
           setLocationPermission('granted');
-          alert('Location access granted! You can now enable auto-detection.');
+          toast.success('Location access granted! You can now enable auto-detection.');
         },
         () => {
           setLocationPermission('denied');
-          alert('Location access denied. Please enable it in your browser settings.');
+          toast.error('Location access denied. Please enable it in your browser settings.');
+        },
+        { 
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
         }
       );
     }
@@ -72,7 +77,7 @@ export default function AutoDetect() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50">
       <LocationTracker enabled={trackingActive} onTollDetected={handleTollDetected} />
-      <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="max-w-4xl mx-auto px-4 md:px-6 py-6 md:py-12">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-slate-900 mb-2">Auto-Detection</h1>
           <p className="text-slate-600">Configure automatic toll detection with AWS geofencing</p>
