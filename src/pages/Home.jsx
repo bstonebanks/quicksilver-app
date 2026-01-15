@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import QuickPaymentForm from "../components/payment/QuickPaymentForm";
 import TripCard from "../components/trips/TripCard";
+import AIInsightsCard from "../components/insights/AIInsightsCard";
 function HomeContent() {
   const [showSuccess, setShowSuccess] = useState(false);
   const queryClient = useQueryClient();

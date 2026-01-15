@@ -10,9 +10,9 @@ import Map from './pages/Map';
 import MigrateToDynamoDB from './pages/MigrateToDynamoDB';
 import Notifications from './pages/Notifications';
 import Payments from './pages/Payments';
+import PendingTolls from './pages/PendingTolls';
 import TollPasses from './pages/TollPasses';
 import Vehicles from './pages/Vehicles';
-import PendingTolls from './pages/PendingTolls';
 import __Layout from './Layout.jsx';
 
 
@@ -29,9 +29,9 @@ export const PAGES = {
     "MigrateToDynamoDB": MigrateToDynamoDB,
     "Notifications": Notifications,
     "Payments": Payments,
+    "PendingTolls": PendingTolls,
     "TollPasses": TollPasses,
     "Vehicles": Vehicles,
-    "PendingTolls": PendingTolls,
 }
 
 export const pagesConfig = {
