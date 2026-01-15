@@ -1,15 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle, AlertCircle, Copy, ExternalLink } from "lucide-react";
+import { CheckCircle, AlertCircle, Copy, ExternalLink, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { base44 } from "@/api/base44Client";
 
 export default function AWSSetupGuide() {
+  const [updating, setUpdating] = useState(false);
+
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
     toast.success('Copied to clipboard');
+  };
+
+  const updateUserRoles = async () => {
+    setUpdating(true);
+    try {
+      const response = await base44.functions.invoke('updateUserRoles');
+      toast.success(response.data.message);
+    } catch (error) {
+      toast.error('Failed to update user roles: ' + error.message);
+    } finally {
+      setUpdating(false);
+    }
   };
 
   return (
@@ -26,6 +41,27 @@ export default function AWSSetupGuide() {
             <strong>Prerequisites:</strong> You'll need an AWS account with appropriate permissions to create and manage resources.
           </AlertDescription>
         </Alert>
+
+        <Card className="mb-6 border-purple-200 bg-purple-50">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Users className="w-5 h-5 text-purple-600" />
+                <div>
+                  <h3 className="font-semibold text-purple-900">Admin Management</h3>
+                  <p className="text-sm text-purple-700">Update user roles (keep Brooke, Hassan, Liselle as admins)</p>
+                </div>
+              </div>
+              <Button 
+                onClick={updateUserRoles}
+                disabled={updating}
+                className="bg-purple-600 hover:bg-purple-700"
+              >
+                {updating ? 'Updating...' : 'Update User Roles'}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         <Tabs defaultValue="overview" className="w-full">
           <TabsList className="grid w-full grid-cols-7 mb-6">
