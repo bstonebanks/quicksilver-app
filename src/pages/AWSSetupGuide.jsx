@@ -151,6 +151,25 @@ export default function AWSSetupGuide() {
                   </ol>
                 </div>
 
+                <Alert className="bg-red-50 border-red-200 mb-4">
+                  <AlertCircle className="h-4 w-4 text-red-600" />
+                  <AlertDescription className="text-red-800">
+                    <strong>⚠️ CRITICAL: Verify Policies Are Attached!</strong>
+                    <div className="mt-2 text-sm">
+                      After creating the IAM user, you MUST attach the policies listed above. Common issue: policies selected but not actually attached.
+                      <div className="mt-2">
+                        <strong>To verify:</strong>
+                        <ol className="list-decimal list-inside ml-2 space-y-1">
+                          <li>Go to IAM → Users → Select your user</li>
+                          <li>Click "Permissions" tab</li>
+                          <li>Confirm all 5 policies are listed under "Permissions policies"</li>
+                          <li>If missing, click "Add permissions" → "Attach policies directly"</li>
+                        </ol>
+                      </div>
+                    </div>
+                  </AlertDescription>
+                </Alert>
+
                 <Alert>
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
