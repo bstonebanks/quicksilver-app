@@ -33,14 +33,14 @@ Deno.serve(async (req) => {
     switch (operation) {
       case 'create': {
         const item = {
-          ...data,
-          id: crypto.randomUUID(),
           userID,
+          id: data?.id || crypto.randomUUID(),
+          ...data,
           created_date: new Date().toISOString(),
           updated_date: new Date().toISOString(),
           created_by: userID,
         };
-        console.log('Creating item:', { tableName, itemId: item.id });
+        console.log('Creating item:', { tableName, itemId: item.id, item });
         await docClient.send(new PutCommand({
           TableName: tableName,
           Item: item,
@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
       case 'get': {
         const result = await docClient.send(new GetCommand({
           TableName: tableName,
-          Key: { id: key, userID },
+          Key: key,
         }));
         return Response.json(result.Item || null);
       }
@@ -90,19 +90,19 @@ Deno.serve(async (req) => {
 
         await docClient.send(new UpdateCommand({
           TableName: tableName,
-          Key: { id: key, userID },
+          Key: key,
           UpdateExpression: updateExpression,
           ExpressionAttributeNames: expressionAttributeNames,
           ExpressionAttributeValues: expressionAttributeValues,
         }));
 
-        return Response.json({ ...updateData, id: key, userID });
+        return Response.json({ ...updateData, ...key });
       }
 
       case 'delete': {
         await docClient.send(new DeleteCommand({
           TableName: tableName,
-          Key: { id: key, userID },
+          Key: key,
         }));
         return Response.json({ success: true });
       }
