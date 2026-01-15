@@ -9,13 +9,43 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Fetch user's toll history
-    const trips = await base44.entities.Trip.filter({}, '-entry_time', 100);
+    // Fetch user's toll history from DynamoDB
+    const DynamoDBClient = await import('npm:@aws-sdk/client-dynamodb');
+    const LibDynamoDB = await import('npm:@aws-sdk/lib-dynamodb');
+    
+    const client = new DynamoDBClient.DynamoDBClient({
+      region: Deno.env.get('AWS_REGION'),
+      credentials: {
+        accessKeyId: Deno.env.get('AWS_ACCESS_KEY_ID'),
+        secretAccessKey: Deno.env.get('AWS_SECRET_ACCESS_KEY'),
+      },
+    });
+    
+    const docClient = LibDynamoDB.DynamoDBDocumentClient.from(client);
+    
+    // Fetch trips
+    const tripsResult = await docClient.send(new LibDynamoDB.ScanCommand({
+      TableName: 'QuickSilver-Trips',
+      FilterExpression: 'userID = :userID',
+      ExpressionAttributeValues: { ':userID': user.email },
+    }));
+    const trips = tripsResult.Items || [];
     
     // Fetch payment methods
-    const { dynamodb } = await import('../components/utils/dynamodbClient.js');
-    const paymentMethods = await dynamodb.paymentMethods.list(user.email);
-    const vehicles = await dynamodb.vehicles.list(user.email);
+    const paymentsResult = await docClient.send(new LibDynamoDB.ScanCommand({
+      TableName: 'QuickSilver-PaymentMethods',
+      FilterExpression: 'userID = :userID',
+      ExpressionAttributeValues: { ':userID': user.email },
+    }));
+    const paymentMethods = paymentsResult.Items || [];
+    
+    // Fetch vehicles
+    const vehiclesResult = await docClient.send(new LibDynamoDB.ScanCommand({
+      TableName: 'QuickSilver-Vehicles',
+      FilterExpression: 'userID = :userID',
+      ExpressionAttributeValues: { ':userID': user.email },
+    }));
+    const vehicles = vehiclesResult.Items || [];
 
     // Calculate statistics
     const totalSpent = trips.reduce((sum, trip) => sum + (trip.amount || 0), 0);
