@@ -31,17 +31,15 @@ export default function Payments() {
       queryClient.invalidateQueries({ queryKey: ['paymentMethods'] });
       setShowForm(false);
       
-      // Send SMS notification if phone number is available
-      if (user.phone_number) {
-        try {
-          await base44.functions.invoke('sendSNSNotification', {
-            phoneNumber: user.phone_number,
-            message: `QuickSilver: New payment method added - ${result.card_type.toUpperCase()} ending in ${result.last_four}`,
-            subject: 'Payment Method Added'
-          });
-        } catch (error) {
-          console.error('Failed to send SMS notification:', error);
-        }
+      // Send email notification
+      try {
+        await base44.integrations.Core.SendEmail({
+          to: user.email,
+          subject: 'Payment Method Added to QuickSilver',
+          body: `Hello ${user.full_name || 'there'},\n\nA new payment method has been successfully added to your QuickSilver account:\n\nCard Type: ${result.card_type.toUpperCase()}\nLast 4 Digits: ${result.last_four}\nCardholder: ${result.cardholder_name}\n${result.is_default ? '\nThis has been set as your default payment method.' : ''}\n\nYou can now use this card for instant toll payments.\n\nBest regards,\nQuickSilver Team`
+        });
+      } catch (error) {
+        console.error('Failed to send email notification:', error);
       }
     },
   });

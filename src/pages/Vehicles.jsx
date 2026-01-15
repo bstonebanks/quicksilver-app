@@ -43,17 +43,15 @@ export default function Vehicles() {
       queryClient.invalidateQueries({ queryKey: ['vehicles'] });
       setShowForm(false);
       
-      // Send SMS notification if phone number is available
-      if (user.phone_number) {
-        try {
-          await base44.functions.invoke('sendSNSNotification', {
-            phoneNumber: user.phone_number,
-            message: `QuickSilver: New vehicle added - ${result.license_plate} (${result.state})${result.nickname ? ' - ' + result.nickname : ''}`,
-            subject: 'Vehicle Added'
-          });
-        } catch (error) {
-          console.error('Failed to send SMS notification:', error);
-        }
+      // Send email notification
+      try {
+        await base44.integrations.Core.SendEmail({
+          to: user.email,
+          subject: 'Vehicle Added to QuickSilver',
+          body: `Hello ${user.full_name || 'there'},\n\nA new vehicle has been successfully added to your QuickSilver account:\n\nLicense Plate: ${result.license_plate}\nState: ${result.state}${result.nickname ? `\nNickname: ${result.nickname}` : ''}${result.make || result.model ? `\nVehicle: ${result.make || ''} ${result.model || ''}`.trim() : ''}\n\nYou can now use this vehicle for instant toll payments.\n\nBest regards,\nQuickSilver Team`
+        });
+      } catch (error) {
+        console.error('Failed to send email notification:', error);
       }
     },
     onError: (error) => {
