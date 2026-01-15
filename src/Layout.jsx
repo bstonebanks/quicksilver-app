@@ -29,7 +29,6 @@ export default function Layout({ children, currentPageName }) {
   const navItems = [
     { name: 'Home', icon: Home, path: createPageUrl('Home') },
     { name: 'Pending', icon: Clock, path: createPageUrl('PendingTolls') },
-    { name: 'Settings', icon: Cloud, path: createPageUrl('GeofenceSettings') },
     { name: 'Map', icon: MapPin, path: createPageUrl('Map') },
     { name: 'Auto-Detect', icon: Radio, path: createPageUrl('AutoDetect') },
     { name: 'Vehicles', icon: Car, path: createPageUrl('Vehicles') },
@@ -37,7 +36,14 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Payments', icon: CreditCard, path: createPageUrl('Payments') },
     { name: 'History', icon: Receipt, path: createPageUrl('History') },
     { name: 'Alerts', icon: Bell, path: createPageUrl('Notifications') },
-    ];
+  ];
+
+  const mobileNavItems = [
+    { name: 'Home', icon: Home, path: createPageUrl('Home') },
+    { name: 'Vehicles', icon: Car, path: createPageUrl('Vehicles') },
+    { name: 'Map', icon: MapPin, path: createPageUrl('Map') },
+    { name: 'Payment', icon: CreditCard, path: createPageUrl('Payments') },
+  ];
 
   const isActive = (path) => location.pathname === path;
 
@@ -108,7 +114,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Mobile Navigation */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50 shadow-lg">
         <div className="grid grid-cols-4 gap-1 p-2">
-          {navItems.slice(0, 4).map((item) => {
+          {mobileNavItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
             return (
