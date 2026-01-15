@@ -9,7 +9,6 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import QuickPaymentForm from "../components/payment/QuickPaymentForm";
 import TripCard from "../components/trips/TripCard";
-import AIInsightsCard from "../components/insights/AIInsightsCard";
 function HomeContent() {
   const [showSuccess, setShowSuccess] = useState(false);
   const queryClient = useQueryClient();
@@ -50,27 +49,27 @@ function HomeContent() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50">
       {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-slate-700 via-slate-800 to-blue-900 text-white py-16">
+      <div className="relative overflow-hidden bg-gradient-to-br from-slate-700 via-slate-800 to-blue-900 text-white py-12 md:py-16">
         <div className="absolute inset-0 bg-gradient-to-br from-slate-300/10 via-transparent to-transparent" />
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDE2djhoLThWMTZoOHptMCAwVjhoOHY4aC04ek0yMCA0OHY4aC04di04aDh6bTAtMTZ2OGgtOHYtOGg4em0xNi0xNnY4aC04di04aDh6bTE2IDB2OGgtOHYtOGg4eiIvPjwvZz48L2c+PC9zdmc+')] opacity-30" />
-        <div className="relative max-w-7xl mx-auto px-6">
+        <div className="relative max-w-7xl mx-auto px-4 md:px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center"
           >
-            <h1 className="text-5xl md:text-7xl font-black mb-4 bg-gradient-to-r from-slate-200 via-white to-slate-300 bg-clip-text text-transparent drop-shadow-2xl tracking-tight">
+            <h1 className="text-4xl md:text-7xl font-black mb-3 md:mb-4 bg-gradient-to-r from-slate-200 via-white to-slate-300 bg-clip-text text-transparent drop-shadow-2xl tracking-tight px-2">
               QuickSilver Instant Pay
             </h1>
-            <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto">
+            <p className="text-base md:text-xl text-slate-300 max-w-2xl mx-auto px-4">
               Pay tolls instantly and avoid penalties — no pass required.
             </p>
           </motion.div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-12">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
         {/* Success Message */}
         {showSuccess && (
           <motion.div
@@ -83,13 +82,8 @@ function HomeContent() {
           </motion.div>
         )}
 
-        {/* AI Insights */}
-        <div className="mb-12">
-          <AIInsightsCard />
-        </div>
-
         {/* Quick Access Dashboard */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -148,7 +142,7 @@ function HomeContent() {
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
           {/* Payment Form */}
           <div>
             <QuickPaymentForm onSuccess={handlePaymentSuccess} />
@@ -190,9 +184,9 @@ function HomeContent() {
         </div>
 
         {/* How It Works Section */}
-        <div className="mt-20 bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-12 text-white shadow-2xl">
-          <h2 className="text-3xl font-bold mb-8 text-center">How It Works</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="mt-12 md:mt-20 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl md:rounded-3xl p-6 md:p-12 text-white shadow-2xl">
+          <h2 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 text-center">How It Works</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             <div className="text-center">
               <div className="h-16 w-16 rounded-2xl bg-slate-400 flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl font-bold">1</span>
