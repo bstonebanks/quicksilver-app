@@ -29,6 +29,7 @@ export default function Layout({ children, currentPageName }) {
   const navItems = [
     { name: 'Home', icon: Home, path: createPageUrl('Home') },
     { name: 'Pending', icon: Clock, path: createPageUrl('PendingTolls') },
+    { name: 'Settings', icon: Cloud, path: createPageUrl('GeofenceSettings') },
     { name: 'Map', icon: MapPin, path: createPageUrl('Map') },
     { name: 'Auto-Detect', icon: Radio, path: createPageUrl('AutoDetect') },
     { name: 'Vehicles', icon: Car, path: createPageUrl('Vehicles') },

@@ -13,6 +13,7 @@ import Payments from './pages/Payments';
 import PendingTolls from './pages/PendingTolls';
 import TollPasses from './pages/TollPasses';
 import Vehicles from './pages/Vehicles';
+import GeofenceSettings from './pages/GeofenceSettings';
 import __Layout from './Layout.jsx';
 
 
@@ -32,6 +33,7 @@ export const PAGES = {
     "PendingTolls": PendingTolls,
     "TollPasses": TollPasses,
     "Vehicles": Vehicles,
+    "GeofenceSettings": GeofenceSettings,
 }
 
 export const pagesConfig = {
