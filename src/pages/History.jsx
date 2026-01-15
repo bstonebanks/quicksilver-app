@@ -15,8 +15,9 @@ export default function History() {
   const { data: trips = [], isLoading } = useQuery({
     queryKey: ['trips'],
     queryFn: async () => {
-      const allTrips = await dynamodb.trips.list();
-      return allTrips.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+      const user = await base44.auth.me();
+      const allTrips = await dynamodb.trips.list(user.email);
+      return allTrips.sort((a, b) => new Date(b.entry_time || b.created_date) - new Date(a.entry_time || a.created_date));
     },
   });
 
