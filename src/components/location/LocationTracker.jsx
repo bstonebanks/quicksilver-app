@@ -120,8 +120,6 @@ export default function LocationTracker({ enabled, onTollDetected }) {
           }
         }
         
-        const distance = calculateDistance(latitude, longitude, toll.lat, toll.lng);
-        
         // If within geofence radius
         if (distance <= toll.radius) {
           const lastAlerted = lastAlertedRef.current[toll.id];
