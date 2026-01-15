@@ -24,11 +24,25 @@ export default function Payments() {
   const createMutation = useMutation({
     mutationFn: async (data) => {
       const user = await base44.auth.me();
-      return dynamodb.paymentMethods.create(user.email, data);
+      const result = await dynamodb.paymentMethods.create(user.email, data);
+      return { result, user };
     },
-    onSuccess: () => {
+    onSuccess: async ({ result, user }) => {
       queryClient.invalidateQueries({ queryKey: ['paymentMethods'] });
       setShowForm(false);
+      
+      // Send SMS notification if phone number is available
+      if (user.phone_number) {
+        try {
+          await base44.functions.invoke('sendSNSNotification', {
+            phoneNumber: user.phone_number,
+            message: `QuickSilver: New payment method added - ${result.card_type.toUpperCase()} ending in ${result.last_four}`,
+            subject: 'Payment Method Added'
+          });
+        } catch (error) {
+          console.error('Failed to send SMS notification:', error);
+        }
+      }
     },
   });
 

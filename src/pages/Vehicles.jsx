@@ -28,7 +28,7 @@ export default function Vehicles() {
         console.log('Creating vehicle with data:', data);
         const result = await dynamodb.vehicles.create(user.email, data);
         console.log('Vehicle created successfully:', result);
-        return result;
+        return { result, user };
       } catch (error) {
         console.error('Detailed error:', {
           message: error.message,
@@ -39,9 +39,22 @@ export default function Vehicles() {
         throw error;
       }
     },
-    onSuccess: () => {
+    onSuccess: async ({ result, user }) => {
       queryClient.invalidateQueries({ queryKey: ['vehicles'] });
       setShowForm(false);
+      
+      // Send SMS notification if phone number is available
+      if (user.phone_number) {
+        try {
+          await base44.functions.invoke('sendSNSNotification', {
+            phoneNumber: user.phone_number,
+            message: `QuickSilver: New vehicle added - ${result.license_plate} (${result.state})${result.nickname ? ' - ' + result.nickname : ''}`,
+            subject: 'Vehicle Added'
+          });
+        } catch (error) {
+          console.error('Failed to send SMS notification:', error);
+        }
+      }
     },
     onError: (error) => {
       const errorMsg = error.response?.data?.error || error.message || 'Unknown error';
