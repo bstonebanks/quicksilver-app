@@ -57,11 +57,31 @@ export default function LocationTracker({ enabled, onTollDetected }) {
             lastAlertedRef.current[toll.id] = now;
             
             try {
+              const { base44 } = await import("@/api/base44Client");
+              const user = await base44.auth.me();
+              
+              // Get primary vehicle if available
+              const vehicles = await dynamodb.vehicles.list(user.email);
+              const primaryVehicle = vehicles.find(v => v.is_primary) || vehicles[0];
+              
+              // Create geofence event (pending confirmation)
+              await base44.entities.GeofenceEvent.create({
+                toll_location: toll.name,
+                toll_road: toll.road,
+                amount: toll.amount,
+                detected_at: new Date().toISOString(),
+                status: 'pending',
+                latitude,
+                longitude,
+                geofence_id: toll.id,
+                license_plate: primaryVehicle?.license_plate
+              });
+              
               // Create notification
-              await dynamodb.notifications.create({
+              await dynamodb.notifications.create(user.email, {
                 type: 'toll_detected',
                 title: '🚨 Toll Detected',
-                message: `You just passed through ${toll.name} on ${toll.road}. Amount due: $${toll.amount.toFixed(2)}. Pay now to avoid penalties.`,
+                message: `You just passed through ${toll.name} on ${toll.road}. Amount: $${toll.amount.toFixed(2)}. Please confirm this toll in the Pending Tolls section.`,
                 priority: 'urgent',
                 is_read: false,
                 metadata: {

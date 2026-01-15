@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
-import { Zap, Home, Car, CreditCard, Receipt, MapPin, Radio, Cloud, Bell, Ticket, LogOut } from 'lucide-react';
+import { Zap, Home, Car, CreditCard, Receipt, MapPin, Radio, Cloud, Bell, Ticket, LogOut, Clock } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
 export default function Layout({ children, currentPageName }) {
@@ -28,6 +28,7 @@ export default function Layout({ children, currentPageName }) {
 
   const navItems = [
     { name: 'Home', icon: Home, path: createPageUrl('Home') },
+    { name: 'Pending', icon: Clock, path: createPageUrl('PendingTolls') },
     { name: 'Map', icon: MapPin, path: createPageUrl('Map') },
     { name: 'Auto-Detect', icon: Radio, path: createPageUrl('AutoDetect') },
     { name: 'Vehicles', icon: Car, path: createPageUrl('Vehicles') },
