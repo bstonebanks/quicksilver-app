@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { dynamodb } from "../utils/dynamodbClient";
+import { base44 } from "@/api/base44Client";
 
 const TOLL_LOCATIONS = [
   { id: 'golden-gate', name: 'Golden Gate Bridge', road: 'US-101', lat: 37.8199, lng: -122.4783, amount: 8.75, radius: 500 },
@@ -45,6 +46,17 @@ export default function LocationTracker({ enabled, onTollDetected }) {
       const { latitude, longitude } = position.coords;
       const now = Date.now();
 
+      // Send position to AWS Location Service for geofencing
+      try {
+        await base44.functions.invoke('updateDevicePosition', {
+          latitude,
+          longitude,
+        });
+      } catch (error) {
+        console.error('Failed to update AWS position:', error);
+      }
+
+      // Also check locally as fallback
       for (const toll of TOLL_LOCATIONS) {
         const distance = calculateDistance(latitude, longitude, toll.lat, toll.lng);
         
