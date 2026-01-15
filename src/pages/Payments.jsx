@@ -25,22 +25,19 @@ export default function Payments() {
     mutationFn: async (data) => {
       const user = await base44.auth.me();
       const result = await dynamodb.paymentMethods.create(user.email, data);
-      return { result, user };
+      
+      // Send email notification (non-blocking)
+      base44.integrations.Core.SendEmail({
+        to: user.email,
+        subject: 'Payment Method Added to QuickSilver',
+        body: `Hello ${user.full_name || 'there'},\n\nA new payment method has been successfully added to your QuickSilver account:\n\nCard Type: ${result.card_type.toUpperCase()}\nLast 4 Digits: ${result.last_four}\nCardholder: ${result.cardholder_name}\n${result.is_default ? '\nThis has been set as your default payment method.' : ''}\n\nYou can now use this card for instant toll payments.\n\nBest regards,\nQuickSilver Team`
+      }).catch(err => console.error('Email notification failed:', err));
+      
+      return result;
     },
-    onSuccess: async ({ result, user }) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['paymentMethods'] });
       setShowForm(false);
-      
-      // Send email notification
-      try {
-        await base44.integrations.Core.SendEmail({
-          to: user.email,
-          subject: 'Payment Method Added to QuickSilver',
-          body: `Hello ${user.full_name || 'there'},\n\nA new payment method has been successfully added to your QuickSilver account:\n\nCard Type: ${result.card_type.toUpperCase()}\nLast 4 Digits: ${result.last_four}\nCardholder: ${result.cardholder_name}\n${result.is_default ? '\nThis has been set as your default payment method.' : ''}\n\nYou can now use this card for instant toll payments.\n\nBest regards,\nQuickSilver Team`
-        });
-      } catch (error) {
-        console.error('Failed to send email notification:', error);
-      }
     },
   });
 

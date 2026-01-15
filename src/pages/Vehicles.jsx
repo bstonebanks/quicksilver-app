@@ -23,36 +23,23 @@ export default function Vehicles() {
 
   const createMutation = useMutation({
     mutationFn: async (data) => {
-      try {
-        const user = await base44.auth.me();
-        console.log('Creating vehicle with data:', data);
-        const result = await dynamodb.vehicles.create(user.email, data);
-        console.log('Vehicle created successfully:', result);
-        return { result, user };
-      } catch (error) {
-        console.error('Detailed error:', {
-          message: error.message,
-          response: error.response?.data,
-          status: error.response?.status,
-          fullError: error
-        });
-        throw error;
-      }
+      const user = await base44.auth.me();
+      console.log('Creating vehicle with data:', data);
+      const result = await dynamodb.vehicles.create(user.email, data);
+      console.log('Vehicle created successfully:', result);
+      
+      // Send email notification (non-blocking)
+      base44.integrations.Core.SendEmail({
+        to: user.email,
+        subject: 'Vehicle Added to QuickSilver',
+        body: `Hello ${user.full_name || 'there'},\n\nA new vehicle has been successfully added to your QuickSilver account:\n\nLicense Plate: ${result.license_plate}\nState: ${result.state}${result.nickname ? `\nNickname: ${result.nickname}` : ''}${result.make || result.model ? `\nVehicle: ${result.make || ''} ${result.model || ''}`.trim() : ''}\n\nYou can now use this vehicle for instant toll payments.\n\nBest regards,\nQuickSilver Team`
+      }).catch(err => console.error('Email notification failed:', err));
+      
+      return result;
     },
-    onSuccess: async ({ result, user }) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vehicles'] });
       setShowForm(false);
-      
-      // Send email notification
-      try {
-        await base44.integrations.Core.SendEmail({
-          to: user.email,
-          subject: 'Vehicle Added to QuickSilver',
-          body: `Hello ${user.full_name || 'there'},\n\nA new vehicle has been successfully added to your QuickSilver account:\n\nLicense Plate: ${result.license_plate}\nState: ${result.state}${result.nickname ? `\nNickname: ${result.nickname}` : ''}${result.make || result.model ? `\nVehicle: ${result.make || ''} ${result.model || ''}`.trim() : ''}\n\nYou can now use this vehicle for instant toll payments.\n\nBest regards,\nQuickSilver Team`
-        });
-      } catch (error) {
-        console.error('Failed to send email notification:', error);
-      }
     },
     onError: (error) => {
       const errorMsg = error.response?.data?.error || error.message || 'Unknown error';
