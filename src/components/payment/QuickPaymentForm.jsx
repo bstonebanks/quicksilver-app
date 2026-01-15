@@ -36,9 +36,10 @@ export default function QuickPaymentForm({ onSuccess }) {
 
   const loadData = async () => {
     const { dynamodb } = await import("../utils/dynamodbClient");
+    const user = await base44.auth.me();
     const [vehiclesData, paymentMethodsData] = await Promise.all([
-      dynamodb.vehicles.list(),
-      dynamodb.paymentMethods.list()
+      dynamodb.vehicles.list(user.email),
+      dynamodb.paymentMethods.list(user.email)
     ]);
     setVehicles(vehiclesData);
     setPaymentMethods(paymentMethodsData);
@@ -65,7 +66,8 @@ export default function QuickPaymentForm({ onSuccess }) {
       const confirmationNumber = `QS${Date.now().toString().slice(-8)}`;
 
       const { dynamodb } = await import("../utils/dynamodbClient");
-      const trip = await dynamodb.trips.create({
+      const user = await base44.auth.me();
+      const trip = await dynamodb.trips.create(user.email, {
         toll_location: tollInfo.location,
         toll_road: tollInfo.road,
         entry_time: new Date().toISOString(),
@@ -78,7 +80,7 @@ export default function QuickPaymentForm({ onSuccess }) {
 
       // Create notification for successful payment (optional)
       try {
-        await dynamodb.notifications.create({
+        await dynamodb.notifications.create(user.email, {
           type: 'payment_success',
           title: 'Toll Payment Successful',
           message: `Your $${tollInfo.amount.toFixed(2)} toll payment for ${tollInfo.road} at ${tollInfo.location} has been processed successfully. Confirmation: ${confirmationNumber}`,
