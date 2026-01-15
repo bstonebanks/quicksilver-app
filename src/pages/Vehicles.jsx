@@ -24,11 +24,18 @@ export default function Vehicles() {
   const createMutation = useMutation({
     mutationFn: async (data) => {
       const user = await base44.auth.me();
-      return dynamodb.vehicles.create(user.email, data);
+      console.log('Creating vehicle with data:', data);
+      const result = await dynamodb.vehicles.create(user.email, data);
+      console.log('Vehicle created:', result);
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vehicles'] });
       setShowForm(false);
+    },
+    onError: (error) => {
+      console.error('Failed to create vehicle:', error);
+      alert('Failed to add vehicle. Please check the console for details.');
     },
   });
 

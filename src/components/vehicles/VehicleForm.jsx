@@ -28,6 +28,10 @@ export default function VehicleForm({ onSubmit, onCancel, loading }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!formData.license_plate || !formData.state) {
+      alert('Please fill in required fields: License Plate and State');
+      return;
+    }
     onSubmit(formData);
   };
 
