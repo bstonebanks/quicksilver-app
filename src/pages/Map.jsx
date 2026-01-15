@@ -161,25 +161,7 @@ export default function Map() {
           <p className="text-slate-600">Interactive map with geofencing and auto-detection</p>
         </div>
 
-        {/* AWS Info Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6 bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-2xl p-6"
-        >
-          <div className="flex items-start gap-4">
-            <div className="h-12 w-12 rounded-xl bg-blue-600 flex items-center justify-center flex-shrink-0">
-              <Info className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h3 className="font-bold text-blue-900 mb-2">AWS Location Service Integration</h3>
-              <p className="text-blue-800 text-sm leading-relaxed">
-                This map uses <strong>Amazon Location Service</strong> with geofencing to automatically detect when you enter toll zones. 
-                Geofences trigger EventBridge → Lambda → instant payment notifications.
-              </p>
-            </div>
-          </div>
-        </motion.div>
+
 
         {/* Controls */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
