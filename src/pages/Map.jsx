@@ -62,6 +62,69 @@ const TOLL_LOCATIONS = [
     geofenceRadius: 170,
     description: 'Express lanes'
   },
+  {
+    id: 6,
+    name: 'Dulles Toll Road',
+    location: 'Reston',
+    coordinates: [38.9587, -77.3579],
+    amount: 4.25,
+    geofenceRadius: 180,
+    description: 'VA-267 Express toll lanes'
+  },
+  {
+    id: 7,
+    name: 'Chesapeake Bay Bridge',
+    location: 'Eastbound Toll Plaza',
+    coordinates: [38.9898, -76.3775],
+    amount: 6.00,
+    geofenceRadius: 200,
+    description: 'US-50/301 crossing'
+  },
+  {
+    id: 8,
+    name: 'I-95 Express Lanes',
+    location: 'Springfield',
+    coordinates: [38.7893, -77.2011],
+    amount: 5.50,
+    geofenceRadius: 150,
+    description: 'HOT lanes dynamic pricing'
+  },
+  {
+    id: 9,
+    name: 'George Washington Bridge',
+    location: 'Upper Level',
+    coordinates: [40.8517, -73.9527],
+    amount: 16.00,
+    geofenceRadius: 200,
+    description: 'E-ZPass required peak hours'
+  },
+  {
+    id: 10,
+    name: 'New Jersey Turnpike',
+    location: 'Exit 14',
+    coordinates: [40.6895, -74.2424],
+    amount: 3.50,
+    geofenceRadius: 180,
+    description: 'Electronic toll collection'
+  },
+  {
+    id: 11,
+    name: 'Garden State Parkway',
+    location: 'Exit 142',
+    coordinates: [40.9234, -74.0682],
+    amount: 1.50,
+    geofenceRadius: 150,
+    description: 'All electronic tolling'
+  },
+  {
+    id: 12,
+    name: 'Lincoln Tunnel',
+    location: 'New Jersey Entrance',
+    coordinates: [40.7614, -74.0055],
+    amount: 17.00,
+    geofenceRadius: 180,
+    description: 'Peak hour pricing'
+  },
 ];
 
 function LocationMarker({ position, onLocationFound }) {
@@ -109,7 +172,11 @@ export default function Map() {
           checkNearbyTolls(coords);
         },
         (error) => console.error('Location error:', error),
-        { enableHighAccuracy: true, maximumAge: 10000 }
+        { 
+          enableHighAccuracy: true, 
+          maximumAge: 30000,
+          timeout: 27000
+        }
       );
 
       return () => navigator.geolocation.clearWatch(watchId);
@@ -151,11 +218,11 @@ export default function Map() {
     }
   };
 
-  const defaultCenter = [37.7749, -122.4194]; // San Francisco
+  const defaultCenter = userLocation || [38.9072, -77.0369]; // DC area as default
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-cyan-50">
-      <div className="max-w-7xl mx-auto px-6 py-12">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-12">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-slate-900 mb-2">Toll Locations</h1>
           <p className="text-slate-600">Interactive map with geofencing and auto-detection</p>
@@ -248,11 +315,14 @@ export default function Map() {
         {/* Map */}
         <Card className="border-slate-200 overflow-hidden">
           <CardContent className="p-0">
-            <div style={{ height: '600px', width: '100%' }}>
+            <div style={{ height: '500px', width: '100%' }} className="md:h-[600px]">
               <MapContainer
-                center={userLocation || defaultCenter}
+                center={defaultCenter}
                 zoom={10}
                 style={{ height: '100%', width: '100%' }}
+                scrollWheelZoom={false}
+                touchZoom={true}
+                dragging={true}
               >
                 <TileLayer
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
