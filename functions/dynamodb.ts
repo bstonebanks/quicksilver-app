@@ -13,7 +13,7 @@ const client = new DynamoDBClient({
 const docClient = DynamoDBDocumentClient.from(client);
 
 Deno.serve(async (req) => {
-  let operation, tableName;
+  let operation, tableName, data, key, filterExpression, expressionAttributeValues;
   try {
     const body = await req.json();
     ({ operation, tableName, data, key, filterExpression, expressionAttributeValues } = body);
