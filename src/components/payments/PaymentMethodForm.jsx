@@ -4,27 +4,37 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CreditCard, X } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CreditCard, Wallet, X } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function PaymentMethodForm({ onSubmit, onCancel, loading }) {
+  const [paymentType, setPaymentType] = useState('credit_card');
   const [formData, setFormData] = useState({
+    payment_type: 'credit_card',
     card_type: '',
     last_four: '',
     expiry_month: '',
     expiry_year: '',
     cardholder_name: '',
+    wallet_email: '',
     is_default: false,
     auto_pay_enabled: false
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({
+    const submitData = {
       ...formData,
-      expiry_month: parseInt(formData.expiry_month),
-      expiry_year: parseInt(formData.expiry_year)
-    });
+      payment_type: paymentType
+    };
+    
+    if (paymentType === 'credit_card' || paymentType === 'debit_card') {
+      submitData.expiry_month = parseInt(formData.expiry_month);
+      submitData.expiry_year = parseInt(formData.expiry_year);
+    }
+    
+    onSubmit(submitData);
   };
 
   const currentYear = new Date().getFullYear();
@@ -41,7 +51,7 @@ export default function PaymentMethodForm({ onSubmit, onCancel, loading }) {
         <CardHeader className="pb-4 border-b">
           <div className="flex justify-between items-center">
             <CardTitle className="text-xl font-bold flex items-center gap-2">
-              <CreditCard className="w-5 h-5 text-cyan-600" />
+              <Wallet className="w-5 h-5 text-cyan-600" />
               Add Payment Method
             </CardTitle>
             <Button variant="ghost" size="icon" onClick={onCancel}>
@@ -50,10 +60,31 @@ export default function PaymentMethodForm({ onSubmit, onCancel, loading }) {
           </div>
         </CardHeader>
         <CardContent className="pt-6">
+          <Tabs value={paymentType} onValueChange={(value) => { setPaymentType(value); setFormData({ ...formData, payment_type: value }); }} className="mb-6">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="credit_card">
+                <CreditCard className="w-4 h-4 mr-2" />
+                Credit
+              </TabsTrigger>
+              <TabsTrigger value="debit_card">
+                <CreditCard className="w-4 h-4 mr-2" />
+                Debit
+              </TabsTrigger>
+              <TabsTrigger value="apple_pay">
+                <Wallet className="w-4 h-4 mr-2" />
+                Apple Pay
+              </TabsTrigger>
+              <TabsTrigger value="google_pay">
+                <Wallet className="w-4 h-4 mr-2" />
+                Google Pay
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="cardholder_name" className="text-slate-700 font-medium">
-                Cardholder Name *
+                {paymentType === 'apple_pay' || paymentType === 'google_pay' ? 'Account Name' : 'Cardholder Name'} *
               </Label>
               <Input
                 id="cardholder_name"
@@ -65,33 +96,119 @@ export default function PaymentMethodForm({ onSubmit, onCancel, loading }) {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            {(paymentType === 'apple_pay' || paymentType === 'google_pay') && (
               <div className="space-y-2">
-                <Label htmlFor="card_type" className="text-slate-700 font-medium">
-                  Card Type *
-                </Label>
-                <Select
-                  value={formData.card_type}
-                  onValueChange={(value) => setFormData({ ...formData, card_type: value })}
-                  required
-                >
-                  <SelectTrigger className="h-11 border-slate-200 focus:border-cyan-400">
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="visa">Visa</SelectItem>
-                    <SelectItem value="mastercard">Mastercard</SelectItem>
-                    <SelectItem value="amex">American Express</SelectItem>
-                    <SelectItem value="discover">Discover</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="last_four" className="text-slate-700 font-medium">
-                  Last 4 Digits *
+                <Label htmlFor="wallet_email" className="text-slate-700 font-medium">
+                  Wallet Email *
                 </Label>
                 <Input
-                  id="last_four"
+                  id="wallet_email"
+                  type="email"
+                  value={formData.wallet_email}
+                  onChange={(e) => setFormData({ ...formData, wallet_email: e.target.value })}
+                  placeholder="john@example.com"
+                  className="h-11 border-slate-200 focus:border-cyan-400"
+                  required
+                />
+              </div>
+            )}
+
+            {(paymentType === 'credit_card' || paymentType === 'debit_card') && (
+              <>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="card_type" className="text-slate-700 font-medium">
+                      Card Type *
+                    </Label>
+                    <Select
+                      value={formData.card_type}
+                      onValueChange={(value) => setFormData({ ...formData, card_type: value })}
+                      required
+                    >
+                      <SelectTrigger className="h-11 border-slate-200 focus:border-cyan-400">
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="visa">Visa</SelectItem>
+                        <SelectItem value="mastercard">Mastercard</SelectItem>
+                        <SelectItem value="amex">American Express</SelectItem>
+                        <SelectItem value="discover">Discover</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="last_four" className="text-slate-700 font-medium">
+                      Last 4 Digits *
+                    </Label>
+                    <Input
+                      id="last_four"
+                      value={formData.last_four}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '').slice(0, 4);
+                        setFormData({ ...formData, last_four: value });
+                      }}
+                      placeholder="1234"
+                      maxLength={4}
+                      className="font-mono h-11 border-slate-200 focus:border-cyan-400"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="expiry_month" className="text-slate-700 font-medium">
+                      Expiry Month *
+                    </Label>
+                    <Select
+                      value={formData.expiry_month}
+                      onValueChange={(value) => setFormData({ ...formData, expiry_month: value })}
+                      required
+                    >
+                      <SelectTrigger className="h-11 border-slate-200 focus:border-cyan-400">
+                        <SelectValue placeholder="Month" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
+                          <SelectItem key={month} value={String(month)}>
+                            {String(month).padStart(2, '0')}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="expiry_year" className="text-slate-700 font-medium">
+                      Expiry Year *
+                    </Label>
+                    <Select
+                      value={formData.expiry_year}
+                      onValueChange={(value) => setFormData({ ...formData, expiry_year: value })}
+                      required
+                    >
+                      <SelectTrigger className="h-11 border-slate-200 focus:border-cyan-400">
+                        <SelectValue placeholder="Year" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {years.map((year) => (
+                          <SelectItem key={year} value={String(year)}>
+                            {year}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {(paymentType === 'apple_pay' || paymentType === 'google_pay') && (
+              <div className="space-y-2">
+                <Label htmlFor="last_four_wallet" className="text-slate-700 font-medium">
+                  Last 4 Digits of Linked Card *
+                </Label>
+                <Input
+                  id="last_four_wallet"
                   value={formData.last_four}
                   onChange={(e) => {
                     const value = e.target.value.replace(/\D/g, '').slice(0, 4);
@@ -103,52 +220,7 @@ export default function PaymentMethodForm({ onSubmit, onCancel, loading }) {
                   required
                 />
               </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="expiry_month" className="text-slate-700 font-medium">
-                  Expiry Month *
-                </Label>
-                <Select
-                  value={formData.expiry_month}
-                  onValueChange={(value) => setFormData({ ...formData, expiry_month: value })}
-                  required
-                >
-                  <SelectTrigger className="h-11 border-slate-200 focus:border-cyan-400">
-                    <SelectValue placeholder="Month" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
-                      <SelectItem key={month} value={String(month)}>
-                        {String(month).padStart(2, '0')}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="expiry_year" className="text-slate-700 font-medium">
-                  Expiry Year *
-                </Label>
-                <Select
-                  value={formData.expiry_year}
-                  onValueChange={(value) => setFormData({ ...formData, expiry_year: value })}
-                  required
-                >
-                  <SelectTrigger className="h-11 border-slate-200 focus:border-cyan-400">
-                    <SelectValue placeholder="Year" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {years.map((year) => (
-                      <SelectItem key={year} value={String(year)}>
-                        {year}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+            )}
 
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
@@ -181,7 +253,9 @@ export default function PaymentMethodForm({ onSubmit, onCancel, loading }) {
             <div className="bg-slate-50 rounded-lg p-4 text-sm text-slate-600">
               <p className="flex items-center gap-2">
                 <span className="text-cyan-600">ℹ️</span>
-                For security, we only store the last 4 digits. Full card details are processed securely.
+                {paymentType === 'apple_pay' || paymentType === 'google_pay' 
+                  ? 'Digital wallet payments are processed securely through your device.' 
+                  : 'For security, we only store the last 4 digits. Full card details are processed securely.'}
               </p>
             </div>
 
@@ -200,7 +274,7 @@ export default function PaymentMethodForm({ onSubmit, onCancel, loading }) {
                 className="flex-1 h-12 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
                 disabled={loading}
               >
-                {loading ? 'Adding...' : 'Add Card'}
+                {loading ? 'Adding...' : paymentType === 'apple_pay' || paymentType === 'google_pay' ? 'Add Wallet' : 'Add Card'}
               </Button>
             </div>
           </form>

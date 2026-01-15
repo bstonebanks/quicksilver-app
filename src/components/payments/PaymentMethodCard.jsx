@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CreditCard, Star, Trash2 } from "lucide-react";
+import { CreditCard, Star, Trash2, Wallet, Smartphone } from "lucide-react";
 import { motion } from "framer-motion";
 
 const cardColors = {
@@ -12,8 +12,20 @@ const cardColors = {
   discover: 'from-orange-500 to-amber-600'
 };
 
+const walletColors = {
+  apple_pay: 'from-slate-800 to-slate-950',
+  google_pay: 'from-blue-600 to-blue-800'
+};
+
 export default function PaymentMethodCard({ paymentMethod, onDelete, onSetDefault, index }) {
-  const cardColor = cardColors[paymentMethod.card_type] || 'from-slate-500 to-slate-700';
+  const isWallet = paymentMethod.payment_type === 'apple_pay' || paymentMethod.payment_type === 'google_pay';
+  const cardColor = isWallet 
+    ? walletColors[paymentMethod.payment_type] 
+    : (cardColors[paymentMethod.card_type] || 'from-slate-500 to-slate-700');
+  
+  const displayName = isWallet 
+    ? (paymentMethod.payment_type === 'apple_pay' ? 'Apple Pay' : 'Google Pay')
+    : paymentMethod.card_type;
 
   return (
     <motion.div
@@ -29,7 +41,7 @@ export default function PaymentMethodCard({ paymentMethod, onDelete, onSetDefaul
           <div className="flex justify-between items-start mb-4">
             <div className="flex items-center gap-2 flex-wrap">
               <h3 className="font-bold text-lg text-slate-900 capitalize">
-                {paymentMethod.card_type}
+                {displayName}
               </h3>
               {paymentMethod.is_default && (
                 <Badge className="bg-cyan-100 text-cyan-700 border-cyan-200 border">
@@ -47,9 +59,13 @@ export default function PaymentMethodCard({ paymentMethod, onDelete, onSetDefaul
 
           <div className={`bg-gradient-to-br ${cardColor} rounded-2xl p-6 mb-4 text-white shadow-lg`}>
             <div className="flex justify-between items-start mb-8">
-              <CreditCard className="w-10 h-10 opacity-80" />
+              {isWallet ? (
+                <Wallet className="w-10 h-10 opacity-80" />
+              ) : (
+                <CreditCard className="w-10 h-10 opacity-80" />
+              )}
               <p className="text-xs opacity-80 uppercase tracking-wider">
-                {paymentMethod.card_type}
+                {displayName}
               </p>
             </div>
             <p className="font-mono text-2xl tracking-wider mb-4">
@@ -57,15 +73,23 @@ export default function PaymentMethodCard({ paymentMethod, onDelete, onSetDefaul
             </p>
             <div className="flex justify-between items-end">
               <div>
-                <p className="text-xs opacity-70 mb-1">Cardholder</p>
+                <p className="text-xs opacity-70 mb-1">{isWallet ? 'Account' : 'Cardholder'}</p>
                 <p className="font-medium text-sm">{paymentMethod.cardholder_name}</p>
               </div>
-              <div className="text-right">
-                <p className="text-xs opacity-70 mb-1">Expires</p>
-                <p className="font-medium text-sm">
-                  {String(paymentMethod.expiry_month).padStart(2, '0')}/{String(paymentMethod.expiry_year).slice(-2)}
-                </p>
-              </div>
+              {!isWallet && paymentMethod.expiry_month && paymentMethod.expiry_year && (
+                <div className="text-right">
+                  <p className="text-xs opacity-70 mb-1">Expires</p>
+                  <p className="font-medium text-sm">
+                    {String(paymentMethod.expiry_month).padStart(2, '0')}/{String(paymentMethod.expiry_year).slice(-2)}
+                  </p>
+                </div>
+              )}
+              {isWallet && paymentMethod.wallet_email && (
+                <div className="text-right">
+                  <p className="text-xs opacity-70 mb-1">Email</p>
+                  <p className="font-medium text-sm text-xs truncate max-w-[120px]">{paymentMethod.wallet_email}</p>
+                </div>
+              )}
             </div>
           </div>
 

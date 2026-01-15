@@ -34,6 +34,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Vehicles', icon: Car, path: createPageUrl('Vehicles') },
     { name: 'Toll Passes', icon: Ticket, path: createPageUrl('TollPasses') },
     { name: 'Payments', icon: CreditCard, path: createPageUrl('Payments') },
+    { name: 'Recurring', icon: Zap, path: createPageUrl('RecurringPayments') },
     { name: 'History', icon: Receipt, path: createPageUrl('History') },
     { name: 'Alerts', icon: Bell, path: createPageUrl('Notifications') },
   ];
