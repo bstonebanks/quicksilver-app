@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
-import { Zap, Home, Car, CreditCard, Receipt, MapPin, Radio, Cloud, Bell, Ticket, LogOut, Clock } from 'lucide-react';
+import { Zap, Home, Car, CreditCard, Receipt, MapPin, Radio, Cloud, Bell, Ticket, LogOut, Clock, Menu } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
   const [user, setUser] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     loadUser();
@@ -54,6 +56,41 @@ export default function Layout({ children, currentPageName }) {
       <nav className="bg-white/80 backdrop-blur-lg border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex justify-between items-center h-20">
+            {/* Mobile Menu Button */}
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <Menu className="w-6 h-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-72">
+                <SheetHeader>
+                  <SheetTitle className="text-left">Menu</SheetTitle>
+                </SheetHeader>
+                <div className="flex flex-col gap-2 mt-6">
+                  {navItems.map((item) => {
+                    const Icon = item.icon;
+                    const active = isActive(item.path);
+                    return (
+                      <Link
+                        key={item.name}
+                        to={item.path}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${
+                          active
+                            ? 'bg-gradient-to-r from-slate-500 to-blue-900 text-white'
+                            : 'text-slate-700 hover:bg-slate-100'
+                        }`}
+                      >
+                        <Icon className="w-5 h-5" />
+                        <span>{item.name}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </SheetContent>
+            </Sheet>
+
             {/* Logo */}
             <Link to={createPageUrl('Home')} className="flex items-center gap-3 group">
               <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-slate-400 to-blue-900 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 overflow-hidden">
@@ -63,7 +100,7 @@ export default function Layout({ children, currentPageName }) {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div>
+              <div className="hidden sm:block">
                 <h1 className="text-xl font-bold text-slate-900">QuickSilver</h1>
                 <p className="text-xs text-slate-600">Instant Toll Payment</p>
               </div>
