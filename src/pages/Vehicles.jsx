@@ -28,6 +28,10 @@ export default function Vehicles() {
       const result = await dynamodb.vehicles.create(user.email, data);
       console.log('Vehicle created successfully:', result);
       
+      // Invoke Lambda function (non-blocking)
+      base44.functions.invoke('invokeLambdaVehicle', { vehicleData: result })
+        .catch(err => console.error('Lambda invocation failed:', err));
+      
       // Send email notification (non-blocking)
       base44.integrations.Core.SendEmail({
         to: user.email,
