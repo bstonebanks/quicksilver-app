@@ -1,0 +1,63 @@
+{
+  "name": "GeofenceRule",
+  "type": "object",
+  "properties": {
+    "rule_name": {
+      "type": "string",
+      "description": "Name of the rule"
+    },
+    "geofence_id": {
+      "type": "string",
+      "description": "ID of toll geofence this applies to (or 'all')"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "auto_pay",
+        "notify_only",
+        "notify_with_confirm",
+        "silent"
+      ],
+      "default": "notify_with_confirm",
+      "description": "What to do when geofence is triggered"
+    },
+    "days_of_week": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "description": "Days active (0=Sun, 6=Sat). Empty = all days"
+    },
+    "time_start": {
+      "type": "string",
+      "description": "Start time in HH:MM format (24-hour)"
+    },
+    "time_end": {
+      "type": "string",
+      "description": "End time in HH:MM format (24-hour)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether rule is currently active"
+    },
+    "priority": {
+      "type": "number",
+      "default": 0,
+      "description": "Rule priority (higher = more important)"
+    }
+  },
+  "required": [
+    "rule_name",
+    "action"
+  ]
+}

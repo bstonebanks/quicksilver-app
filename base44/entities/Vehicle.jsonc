@@ -1,0 +1,50 @@
+{
+  "name": "Vehicle",
+  "type": "object",
+  "properties": {
+    "license_plate": {
+      "type": "string",
+      "description": "Vehicle license plate number"
+    },
+    "state": {
+      "type": "string",
+      "description": "State of registration"
+    },
+    "nickname": {
+      "type": "string",
+      "description": "Friendly name for the vehicle"
+    },
+    "make": {
+      "type": "string",
+      "description": "Vehicle make"
+    },
+    "model": {
+      "type": "string",
+      "description": "Vehicle model"
+    },
+    "color": {
+      "type": "string",
+      "description": "Vehicle color"
+    },
+    "is_primary": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is the primary vehicle"
+    },
+    "linked_payment_methods": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Payment method IDs linked to this vehicle"
+    },
+    "default_payment_method": {
+      "type": "string",
+      "description": "Default payment method ID for this vehicle"
+    }
+  },
+  "required": [
+    "license_plate",
+    "state"
+  ]
+}

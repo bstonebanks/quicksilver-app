@@ -1,0 +1,51 @@
+{
+  "name": "Trip",
+  "type": "object",
+  "properties": {
+    "toll_location": {
+      "type": "string",
+      "description": "Name of the toll plaza or location"
+    },
+    "toll_road": {
+      "type": "string",
+      "description": "Name of the toll road"
+    },
+    "entry_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the vehicle passed through"
+    },
+    "license_plate": {
+      "type": "string",
+      "description": "Vehicle license plate used"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Toll amount paid"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "paid",
+        "pending",
+        "disputed"
+      ],
+      "default": "paid"
+    },
+    "payment_method": {
+      "type": "string",
+      "description": "Last 4 digits of card used"
+    },
+    "confirmation_number": {
+      "type": "string",
+      "description": "Payment confirmation code"
+    }
+  },
+  "required": [
+    "toll_location",
+    "toll_road",
+    "entry_time",
+    "license_plate",
+    "amount"
+  ]
+}

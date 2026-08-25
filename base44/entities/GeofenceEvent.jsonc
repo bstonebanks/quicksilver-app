@@ -1,0 +1,61 @@
+{
+  "name": "GeofenceEvent",
+  "type": "object",
+  "properties": {
+    "toll_location": {
+      "type": "string",
+      "description": "Name of the toll location"
+    },
+    "toll_road": {
+      "type": "string",
+      "description": "Name of the toll road"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Toll amount"
+    },
+    "detected_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the toll crossing was detected"
+    },
+    "license_plate": {
+      "type": "string",
+      "description": "Vehicle license plate if linked"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "confirmed",
+        "paid",
+        "declined"
+      ],
+      "default": "pending",
+      "description": "Status of the geofence event"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Detected latitude"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Detected longitude"
+    },
+    "trip_id": {
+      "type": "string",
+      "description": "Associated trip ID if payment completed"
+    },
+    "geofence_id": {
+      "type": "string",
+      "description": "AWS geofence ID that triggered the event"
+    }
+  },
+  "required": [
+    "toll_location",
+    "toll_road",
+    "amount",
+    "detected_at",
+    "status"
+  ]
+}

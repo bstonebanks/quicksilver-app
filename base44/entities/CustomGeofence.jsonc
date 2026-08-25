@@ -1,0 +1,49 @@
+{
+  "name": "CustomGeofence",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the custom zone (e.g., Home, Work)"
+    },
+    "zone_type": {
+      "type": "string",
+      "enum": [
+        "home",
+        "work",
+        "frequent",
+        "avoid",
+        "custom"
+      ],
+      "description": "Type of custom zone"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Center latitude"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Center longitude"
+    },
+    "radius": {
+      "type": "number",
+      "description": "Radius in meters",
+      "default": 500
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether zone is currently active"
+    },
+    "notification_enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enable notifications for this zone"
+    }
+  },
+  "required": [
+    "name",
+    "latitude",
+    "longitude"
+  ]
+}

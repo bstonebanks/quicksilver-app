@@ -1,0 +1,66 @@
+{
+  "name": "RecurringPayment",
+  "type": "object",
+  "properties": {
+    "route_name": {
+      "type": "string",
+      "description": "Name of the recurring toll route"
+    },
+    "toll_locations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Toll location IDs on this route"
+    },
+    "frequency": {
+      "type": "string",
+      "enum": [
+        "daily",
+        "weekly",
+        "monthly"
+      ],
+      "description": "How often the route is used"
+    },
+    "days_of_week": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "description": "Days active (0=Sun, 6=Sat) for weekly routes"
+    },
+    "estimated_monthly_cost": {
+      "type": "number",
+      "description": "Estimated monthly toll cost"
+    },
+    "payment_method_id": {
+      "type": "string",
+      "description": "Payment method ID for this route"
+    },
+    "vehicle_id": {
+      "type": "string",
+      "description": "Vehicle ID using this route"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether recurring payment is active"
+    },
+    "auto_recharge": {
+      "type": "boolean",
+      "default": false,
+      "description": "Auto-recharge when balance is low"
+    },
+    "recharge_amount": {
+      "type": "number",
+      "description": "Amount to recharge",
+      "default": 50
+    }
+  },
+  "required": [
+    "route_name",
+    "frequency",
+    "payment_method_id",
+    "vehicle_id"
+  ]
+}

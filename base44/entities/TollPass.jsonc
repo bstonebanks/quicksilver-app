@@ -1,0 +1,60 @@
+{
+  "name": "TollPass",
+  "type": "object",
+  "properties": {
+    "pass_type": {
+      "type": "string",
+      "enum": [
+        "ezpass",
+        "fastrak",
+        "sunpass",
+        "ipass",
+        "txtag",
+        "peachpass",
+        "other"
+      ],
+      "description": "Type of toll pass"
+    },
+    "account_number": {
+      "type": "string",
+      "description": "Toll pass account number"
+    },
+    "state": {
+      "type": "string",
+      "description": "State of registration"
+    },
+    "nickname": {
+      "type": "string",
+      "description": "Friendly name for the pass"
+    },
+    "balance": {
+      "type": "number",
+      "description": "Current account balance",
+      "default": 0
+    },
+    "auto_replenish": {
+      "type": "boolean",
+      "default": false,
+      "description": "Auto-replenish when balance is low"
+    },
+    "replenish_threshold": {
+      "type": "number",
+      "description": "Balance threshold to trigger replenishment",
+      "default": 10
+    },
+    "replenish_amount": {
+      "type": "number",
+      "description": "Amount to add when replenishing",
+      "default": 25
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this pass is currently active"
+    }
+  },
+  "required": [
+    "pass_type",
+    "account_number"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "phone_number": {
+      "type": "string",
+      "description": "User phone number for SMS notifications (E.164 format: +14155551234)"
+    }
+  },
+  "required": [
+    "phone_number"
+  ]
+}

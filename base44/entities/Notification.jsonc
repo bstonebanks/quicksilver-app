@@ -1,0 +1,55 @@
+{
+  "name": "Notification",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "toll_detected",
+        "payment_success",
+        "payment_failed",
+        "geofence_entry",
+        "geofence_exit",
+        "weekly_summary"
+      ],
+      "description": "Type of notification"
+    },
+    "title": {
+      "type": "string",
+      "description": "Notification title"
+    },
+    "message": {
+      "type": "string",
+      "description": "Notification message body"
+    },
+    "is_read": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether notification has been read"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "urgent"
+      ],
+      "default": "medium",
+      "description": "Notification priority level"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional data related to notification"
+    },
+    "trip_id": {
+      "type": "string",
+      "description": "Related trip ID if applicable"
+    }
+  },
+  "required": [
+    "type",
+    "title",
+    "message"
+  ]
+}

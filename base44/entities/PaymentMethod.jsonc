@@ -1,0 +1,61 @@
+{
+  "name": "PaymentMethod",
+  "type": "object",
+  "properties": {
+    "payment_type": {
+      "type": "string",
+      "enum": [
+        "credit_card",
+        "debit_card",
+        "apple_pay",
+        "google_pay"
+      ],
+      "default": "credit_card",
+      "description": "Type of payment method"
+    },
+    "card_type": {
+      "type": "string",
+      "enum": [
+        "visa",
+        "mastercard",
+        "amex",
+        "discover"
+      ],
+      "description": "Type of card (for card payments)"
+    },
+    "last_four": {
+      "type": "string",
+      "description": "Last 4 digits of card or wallet token"
+    },
+    "expiry_month": {
+      "type": "number",
+      "description": "Expiration month"
+    },
+    "expiry_year": {
+      "type": "number",
+      "description": "Expiration year"
+    },
+    "cardholder_name": {
+      "type": "string",
+      "description": "Name on card or wallet"
+    },
+    "is_default": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is the default payment method"
+    },
+    "auto_pay_enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether auto-pay is enabled for this payment method"
+    },
+    "wallet_email": {
+      "type": "string",
+      "description": "Email associated with digital wallet"
+    }
+  },
+  "required": [
+    "last_four",
+    "cardholder_name"
+  ]
+}
